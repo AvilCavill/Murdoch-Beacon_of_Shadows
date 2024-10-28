@@ -16,6 +16,6 @@ public class RotateHead : MonoBehaviour
     void Update()
     {
         rotationAnglesY =+ rotationAnglesY + rotateSpeed * Time.deltaTime;
-        transform.rotation = Quaternion.Euler(0, rotationAnglesY * Time.deltaTime, 0);
+        transform.rotation = Quaternion.Euler(0, rotationAnglesY, 0);
     }
 }
