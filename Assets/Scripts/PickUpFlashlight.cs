@@ -7,6 +7,7 @@ public class PickUpFlashlight : MonoBehaviour
 {
     public GameObject PickUpText;
     public GameObject FlashLightOnPlayer;
+    public Transform cameraTransform;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,9 +22,7 @@ public class PickUpFlashlight : MonoBehaviour
             if (Input.GetKey(KeyCode.E))
             {
                 this.gameObject.SetActive(false);
-                
                 FlashLightOnPlayer.SetActive(true);
-                
                 PickUpText.SetActive(false);
             }
         }

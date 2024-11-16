@@ -1,23 +1,60 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    CharacterController characterController;
-    private Vector3 moveDirection = Vector3.zero;
-    
-    public float walkSpeed = 15.0f;
-    public float runSpeed = 25.0f;
+    public float walkSpeed = 3f; // Velocidad de caminata
+    public float runSpeed = 6f; // Velocidad de correr
+    public float gravity = -9.81f; // Gravedad
+    public Transform orientation; // Referencia de la orientación de la cámara
+
+    private CharacterController controller;
+    private Vector3 velocity; // Velocidad vertical (caída)
+    private bool isGrounded;
+
+    // Ajustes de gravedad y control de movimiento
+    public LayerMask groundMask; // Máscara de suelo para detectar colisiones
+    public float groundDistance = 0.4f; // Distancia para considerar que está tocando el suelo
+
     private void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        controller = GetComponent<CharacterController>();
     }
 
     private void Update()
     {
-        
+        // Comprobar si está en el suelo
+        isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundMask);
+
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f; // Mantenerlo pegado al suelo
+        }
+
+        // Obtener entrada de movimiento
+        float horizontal = Input.GetAxis("Horizontal"); // Movimiento A/D
+        float vertical = Input.GetAxis("Vertical"); // Movimiento W/S
+        Vector3 direction = orientation.forward * vertical + orientation.right * horizontal;
+
+        // Verificar si el jugador está corriendo
+        float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+
+        // Aplicar movimiento al CharacterController
+        controller.Move(direction * speed * Time.deltaTime);
+
+        // Hacer que el jugador rote con la cámara (solo en el eje Y)
+        RotateWithCamera();
+
+        // Aplicar gravedad
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+    }
+
+    void RotateWithCamera()
+    {
+        // Ajusta la rotación del jugador para que coincida con la orientación de la cámara en el eje Y
+        Vector3 rotation = new Vector3(0, orientation.eulerAngles.y, 0);
+        transform.eulerAngles = rotation;
     }
 }
-
