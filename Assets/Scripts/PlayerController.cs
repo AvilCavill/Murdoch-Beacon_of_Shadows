@@ -11,11 +11,6 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController controller;
     private Vector3 velocity; // Velocidad vertical (caída)
-    private bool isGrounded;
-
-    // Ajustes de gravedad y control de movimiento
-    public LayerMask groundMask; // Máscara de suelo para detectar colisiones
-    public float groundDistance = 0.4f; // Distancia para considerar que está tocando el suelo
 
     private void Start()
     {
@@ -24,13 +19,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // Comprobar si está en el suelo
-        isGrounded = Physics.CheckSphere(transform.position, groundDistance, groundMask);
-
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f; // Mantenerlo pegado al suelo
-        }
 
         // Obtener entrada de movimiento
         float horizontal = Input.GetAxis("Horizontal"); // Movimiento A/D
