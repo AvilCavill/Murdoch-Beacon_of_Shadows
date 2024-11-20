@@ -12,6 +12,10 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity; // Velocidad vertical (caída)
 
+    // Referencia al sistema de stamina
+    public StaminaBarSystem staminaSystem;
+    public float staminaDrainRate = 10f; // Tasa de consumo de estamina por segundo
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -19,14 +23,27 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-
         // Obtener entrada de movimiento
         float horizontal = Input.GetAxis("Horizontal"); // Movimiento A/D
         float vertical = Input.GetAxis("Vertical"); // Movimiento W/S
         Vector3 direction = orientation.forward * vertical + orientation.right * horizontal;
 
-        // Verificar si el jugador está corriendo
-        float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+        // Determinar velocidad
+        float speed = walkSpeed;
+
+        if (Input.GetKey(KeyCode.LeftShift) && staminaSystem.stamina >= 1)
+        {
+            // Correr si hay suficiente estamina
+            speed = runSpeed;
+            staminaSystem.stamina -= staminaDrainRate * Time.deltaTime; // Reducir estamina
+            staminaSystem.stamina = Mathf.Clamp(staminaSystem.stamina, 0, staminaSystem.maxStamina); // Limitar valores
+        }
+        else
+        {
+            // Regenerar estamina mientras no corremos
+            staminaSystem.stamina += staminaSystem.staminaRegenRate * Time.deltaTime;
+            staminaSystem.stamina = Mathf.Clamp(staminaSystem.stamina, 0, staminaSystem.maxStamina);
+        }
 
         // Aplicar movimiento al CharacterController
         controller.Move(direction * speed * Time.deltaTime);

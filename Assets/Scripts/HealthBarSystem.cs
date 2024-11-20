@@ -8,9 +8,11 @@ public class HealthBarSystem : MonoBehaviour
     public Slider healthSlider;
     public float maxHealth = 100f;
     public float health;
+    public HUDController hudController;
 
     void Start()
     {
+        hudController = FindObjectOfType<HUDController>();
         fill.enabled = false;
         background.enabled = false;
         healthSlider.maxValue = maxHealth;
@@ -28,6 +30,7 @@ public class HealthBarSystem : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        hudController.ShowDamage();
         fill.enabled = true;
         background.enabled = true;
         health -= damage;
