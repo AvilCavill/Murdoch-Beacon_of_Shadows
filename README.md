@@ -19,5 +19,5 @@ Enlace hacia el ClickUp del proyecto [aqui](https://app.clickup.com/9012405415/v
 ## Web
 [Web]()
 
-## Infografia
+## GDD One Page
 ![Infografia ](https://github.com/user-attachments/assets/a58f268a-48fc-446a-81f6-d59f49e61333)
