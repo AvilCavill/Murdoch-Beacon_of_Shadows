@@ -602,7 +602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 922248d80cac0f44d992bfbd89fb35a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generalHUD: {fileID: 2052223299}
+  generalHUD: {fileID: 0}
   menu: {fileID: 1646243906}
   resume: {fileID: 1663424494}
   quit: {fileID: 1592425711}
