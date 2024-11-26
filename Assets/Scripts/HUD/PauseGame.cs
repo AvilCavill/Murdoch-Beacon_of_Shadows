@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseGame : MonoBehaviour
@@ -9,6 +10,7 @@ public class PauseGame : MonoBehaviour
     public Canvas menu;
     public Button resume;
     public Button quit;
+    public AudioSource buttonSound;
 
     public bool on;
     public bool off;
@@ -53,10 +55,12 @@ public class PauseGame : MonoBehaviour
         on = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        buttonSound.Play();
     }
     
     public void ExitGame()
     {
-        Application.Quit();
+        SceneManager.LoadScene(0);
+        buttonSound.Play();
     }
 }
