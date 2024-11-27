@@ -16,6 +16,7 @@ public class PauseGame : MonoBehaviour
     public bool off;
     void Start()
     {
+        Time.timeScale = 1;
         menu.enabled = false;
         off = true;
         on = false;
@@ -60,7 +61,8 @@ public class PauseGame : MonoBehaviour
     
     public void ExitGame()
     {
-        SceneManager.LoadScene(0);
+        Time.timeScale = 1;
+        SceneManager.LoadSceneAsync(0);
         buttonSound.Play();
     }
 }
