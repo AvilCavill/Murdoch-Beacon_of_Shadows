@@ -2397,6 +2397,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b287b91d0ac6e9840a274ffc26d0231a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenu: {fileID: 200760168}
+  optionsMenu: {fileID: 2032038144}
+  loadingMenu: {fileID: 1210163739}
   buttonSound: {fileID: 1557847136}
 --- !u!82 &1557847136
 AudioSource:

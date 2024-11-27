@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.0042762733, g: 0.0042762733, b: 0.0042762733, a: 1}
+  m_IndirectSpecularColor: {r: 0.2139894, g: 0.2139894, b: 0.2139894, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5459,7 +5459,7 @@ MonoBehaviour:
   YouLoseCanvas: {fileID: 1751294984}
   YouWinCanvas: {fileID: 1311810583}
   HealthBarSystem: {fileID: 1271726468}
-  timeLimit: 5
+  timeLimit: 110
   timerText: {fileID: 1442487583}
 --- !u!1 &1910603063
 GameObject:
@@ -5670,6 +5670,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1917298996}
   m_CullTransparentMesh: 1
+--- !u!1 &1948864113
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1948864115}
+  - component: {fileID: 1948864114}
+  m_Layer: 0
+  m_Name: SpawnerItems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1948864114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948864113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef049df53e2a714fb881d6c39aca73f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logPrefab: {fileID: 3048580772900242495, guid: 18549e4c6ca8f6049be6f7a1c51f173d, type: 3}
+  maxLogs: 5
+  spawnRadius: 13.76
+  spawnInterval: 3
+--- !u!4 &1948864115
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948864113}
+  m_LocalRotation: {x: -0.010712142, y: -0.111655414, z: 0.0014507951, w: -0.9936882}
+  m_LocalPosition: {x: 1830.005, y: 58.07, z: 1735.371}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1956171332
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,7 +14,7 @@ public class LevelManager : MonoBehaviour
     public Canvas YouWinCanvas; // Canvas para la victoria
     public HealthBarSystem HealthBarSystem;
 
-    public float timeLimit = 5f;
+    public float timeLimit = 60f;
     private float timer;
     private bool gameLost = false;
     private bool gameWon = false; // Nuevo indicador para victoria
@@ -55,7 +55,7 @@ public class LevelManager : MonoBehaviour
             }
 
             // Detectar si el jugador ha ganado
-            if (timer >= 10f) // Si han pasado 10 segundos
+            if (timer >= 110f) // Si han pasado 10 segundos
             {
                 YouWin();
             }
@@ -66,15 +66,11 @@ public class LevelManager : MonoBehaviour
                 YouLost();
             }
 
-            // Detectar si se presiona la tecla T para añadir 4 segundos
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                AddTime(4f); // Añadir tiempo al temporizador
-            }
+            
         }
     }
 
-    private void AddTime(float additionalTime)
+    public void AddTime(float additionalTime)
     {
         timeLimit += additionalTime;
 
@@ -126,6 +122,7 @@ public class LevelManager : MonoBehaviour
 
     public void ExitMenu()
     {
+        HealthBarSystem.healthSlider.value = 100;
         Time.timeScale = 1;
         SceneManager.LoadSceneAsync(0);
     }

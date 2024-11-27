@@ -12,9 +12,6 @@ public class MainMenuLogic : MonoBehaviour
     
     void Start()
     {
-        mainMenu = GameObject.Find("MainMenu");
-        optionsMenu = GameObject.Find("OptionsMenu");
-        loadingMenu = GameObject.Find("LoadingMenu");
         
         mainMenu.SetActive(true);
         optionsMenu.SetActive(false);
