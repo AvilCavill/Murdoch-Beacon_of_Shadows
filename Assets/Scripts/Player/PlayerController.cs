@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public float runSpeed = 6f; // Velocidad de correr
     public float gravity = -9.81f; // Gravedad
     public Transform orientation; // Referencia de la orientación de la cámara
+    public AudioSource walkingSound;
+    public AudioSource runningSound;
 
     private CharacterController controller;
     private Vector3 velocity; // Velocidad vertical (caída)
@@ -23,6 +25,23 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)){
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                walkingSound.enabled = false;
+                runningSound.enabled = true;
+            }
+            else
+            {
+                walkingSound.enabled = true;
+                runningSound.enabled = false;
+            }
+        }
+        else
+        {
+            walkingSound.enabled = false;
+            runningSound.enabled = false;
+        }
         // Obtener entrada de movimiento
         float horizontal = Input.GetAxis("Horizontal"); // Movimiento A/D
         float vertical = Input.GetAxis("Vertical"); // Movimiento W/S

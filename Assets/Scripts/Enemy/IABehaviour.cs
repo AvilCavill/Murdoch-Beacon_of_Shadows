@@ -16,29 +16,44 @@ public class IABehaviour : MonoBehaviour
     public LayerMask capaJugador; // Capa del jugador
     public LayerMask obstaculos; // Capa de los obstáculos
     public float tiempoParaPerderJugador = 2f; // Tiempo antes de abandonar la persecución
+    public float distanciaAtaque = 2f; // Distancia mínima para atacar al jugador
+    public float tiempoEntreAtaques = 1f; // Tiempo entre ataques
 
-    //Animaciones
-    private Animator _animator;
-    
     [Header("Componentes")]
     private NavMeshAgent agente;
+    private Animator animator; // Componente Animator
     private bool persiguiendo = false;
+    private bool atacando = false;
     private float tiempoSinVerJugador = 0f;
+    private float temporizadorAtaque = 0f;
+    public HealthBarSystem healthBarSystem;
 
     void Start()
     {
         agente = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+
         if (puntosDePatrulla.Length > 0)
         {
             agente.SetDestination(puntosDePatrulla[indiceActual].position);
+            animator.SetTrigger("Patrol"); // Cambia al estado de patrulla
         }
     }
 
     void Update()
     {
+        temporizadorAtaque += Time.deltaTime;
+
         if (persiguiendo)
         {
-            PerseguirJugador();
+            if (Vector3.Distance(transform.position, jugador.position) <= distanciaAtaque)
+            {
+                AtacarJugador(); // Ataca si está lo suficientemente cerca
+            }
+            else
+            {
+                PerseguirJugador(); // Persigue si está fuera del rango de ataque
+            }
         }
         else
         {
@@ -49,14 +64,18 @@ public class IABehaviour : MonoBehaviour
 
     void Patrullar()
     {
-        // Verifica si hay puntos de patrulla configurados
         if (puntosDePatrulla.Length == 0) return;
 
-        // Verifica si llegó al punto de patrulla actual
         if (!agente.pathPending && agente.remainingDistance < 0.5f)
         {
             indiceActual = (indiceActual + 1) % puntosDePatrulla.Length;
             agente.SetDestination(puntosDePatrulla[indiceActual].position);
+        }
+
+        // Cambiar animación a "Patrulla" si no está persiguiendo ni atacando
+        if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Crouch_Action"))
+        {
+            animator.SetTrigger("Patrol");
         }
     }
 
@@ -64,10 +83,14 @@ public class IABehaviour : MonoBehaviour
     {
         if (jugador != null)
         {
-            
             agente.SetDestination(jugador.position);
 
-            // Verifica si el jugador salió del campo de visión
+            // Cambia la animación a "Correr" o "Perseguir"
+            if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Crouch_Action"))
+            {
+                animator.SetTrigger("Pursue");
+            }
+
             float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
 
             if (distanciaAlJugador > rangoVision || !EstaEnCampoDeVision())
@@ -79,11 +102,35 @@ public class IABehaviour : MonoBehaviour
                     persiguiendo = false;
                     tiempoSinVerJugador = 0f;
                     agente.SetDestination(puntosDePatrulla[indiceActual].position);
+
+                    // Vuelve a la animación de patrulla
+                    animator.SetTrigger("Patrol");
                 }
             }
             else
             {
-                tiempoSinVerJugador = 0f; // Resetea el temporizador si el jugador está visible
+                tiempoSinVerJugador = 0f;
+            }
+        }
+    }
+
+    void AtacarJugador()
+    {
+        if (temporizadorAtaque >= tiempoEntreAtaques)
+        {
+            temporizadorAtaque = 0f; // Reinicia el temporizador
+
+            // Cambia a la animación de ataque
+            if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Bite_Action"))
+            {
+                animator.SetTrigger("Attack");
+            }
+
+            // Lógica de daño
+            
+            if (healthBarSystem.health != null)
+            {
+                healthBarSystem.TakeDamage(20);
             }
         }
     }
@@ -95,18 +142,20 @@ public class IABehaviour : MonoBehaviour
             Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
             float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
 
-            // Verifica si el jugador está dentro del rango y del ángulo de visión
             if (distanciaAlJugador <= rangoVision)
             {
-                direccionAlJugador.y = 0; // Ignora la altura
+                direccionAlJugador.y = 0;
                 float angulo = Vector3.Angle(transform.forward, direccionAlJugador);
+
                 if (angulo <= anguloVision / 2f)
                 {
-                    // Verifica si hay línea de visión clara
-                    Vector3 origenRaycast = transform.position + Vector3.up * 1.5f; // Eleva el rayo
+                    Vector3 origenRaycast = transform.position + Vector3.up * 1.5f;
                     if (!Physics.Raycast(origenRaycast, direccionAlJugador, distanciaAlJugador, obstaculos))
                     {
                         persiguiendo = true;
+
+                        // Cambia a la animación de persecución
+                        animator.SetTrigger("Pursue");
                     }
                 }
             }
@@ -118,21 +167,19 @@ public class IABehaviour : MonoBehaviour
         if (jugador == null) return false;
 
         Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
-        direccionAlJugador.y = 0; // Ignora la altura
+        direccionAlJugador.y = 0;
         float angulo = Vector3.Angle(transform.forward, direccionAlJugador);
 
-        Vector3 origenRaycast = transform.position + Vector3.up * 1.5f; // Eleva el rayo
+        Vector3 origenRaycast = transform.position + Vector3.up * 1.5f;
         return angulo <= anguloVision / 2f &&
                !Physics.Raycast(origenRaycast, direccionAlJugador, Vector3.Distance(transform.position, jugador.position), obstaculos);
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Dibuja el rango de visión
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, rangoVision);
 
-        // Dibuja el ángulo de visión
         Vector3 anguloIzquierdo = Quaternion.Euler(0, -anguloVision / 2, 0) * transform.forward;
         Vector3 anguloDerecho = Quaternion.Euler(0, anguloVision / 2, 0) * transform.forward;
 
