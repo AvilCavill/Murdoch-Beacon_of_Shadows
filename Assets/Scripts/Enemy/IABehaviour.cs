@@ -11,13 +11,13 @@ public class IABehaviour : MonoBehaviour
 
     [Header("Persecución")]
     public Transform jugador; // Referencia al jugador
-    public float rangoVision = 10f; // Distancia de visión
-    public float anguloVision = 60f; // Ángulo de visión
+    public float rangoVision = 40f; // Distancia de visión
+    public float anguloVision = 70f; // Ángulo de visión
     public LayerMask capaJugador; // Capa del jugador
     public LayerMask obstaculos; // Capa de los obstáculos
-    public float tiempoParaPerderJugador = 2f; // Tiempo antes de abandonar la persecución
-    public float distanciaAtaque = 2f; // Distancia mínima para atacar al jugador
-    public float tiempoEntreAtaques = 1f; // Tiempo entre ataques
+    public float tiempoParaPerderJugador = 5f; // Tiempo antes de abandonar la persecución
+    public float distanciaAtaque = 1f; // Distancia mínima para atacar al jugador
+    public float tiempoEntreAtaques = 3f; // Tiempo entre ataques
 
     [Header("Componentes")]
     private NavMeshAgent agente;
