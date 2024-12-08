@@ -16,7 +16,7 @@ public class IABehaviour : MonoBehaviour
     public LayerMask capaJugador; // Capa del jugador
     public LayerMask obstaculos; // Capa de los obstáculos
     public float tiempoParaPerderJugador = 5f; // Tiempo antes de abandonar la persecución
-    public float distanciaAtaque = 1f; // Distancia mínima para atacar al jugador
+    public float distanciaAtaque = 3f; // Distancia mínima para atacar al jugador
     public float tiempoEntreAtaques = 3f; // Tiempo entre ataques
 
     [Header("Componentes")]
@@ -120,11 +120,11 @@ public class IABehaviour : MonoBehaviour
         {
             temporizadorAtaque = 0f; // Reinicia el temporizador
 
-            // Cambia a la animación de ataque
-            if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Bite_Action"))
-            {
-                animator.SetTrigger("Attack");
-            }
+            // // Cambia a la animación de ataque
+            // if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Bite_Action"))
+            // {
+            //     animator.SetTrigger("Attack");
+            // }
 
             // Lógica de daño
             
