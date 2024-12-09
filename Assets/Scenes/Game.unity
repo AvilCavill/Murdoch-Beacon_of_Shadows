@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.2139894, g: 0.2139894, b: 0.2139894, a: 1}
+  m_IndirectSpecularColor: {r: 0.0042762733, g: 0.0042762733, b: 0.0042762733, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -47661,7 +47661,7 @@ MonoBehaviour:
   YouLoseCanvas: {fileID: 1751294984}
   YouWinCanvas: {fileID: 1311810583}
   HealthBarSystem: {fileID: 1271726468}
-  timeLimit: 110
+  timeLimit: 90
   timerText: {fileID: 1442487583}
 --- !u!1 &1884068359
 GameObject:

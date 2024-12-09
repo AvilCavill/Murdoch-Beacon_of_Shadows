@@ -31,7 +31,7 @@ public class LevelManager : MonoBehaviour
         // Inicializar texto del temporizador
         if (timerText != null)
         {
-            timerText.text = $"Tiempo restante: {timeLimit:F1} s";
+            timerText.text = $"Time left: {timeLimit:F1} s";
         }
     }
 
@@ -51,7 +51,7 @@ public class LevelManager : MonoBehaviour
 
             if (timerText != null)
             {
-                timerText.text = $"Tiempo restante: {remainingTime:F1} s";
+                timerText.text = $"Time left: {remainingTime:F1} s";
             }
 
             // Detectar si el jugador ha ganado
@@ -78,7 +78,7 @@ public class LevelManager : MonoBehaviour
         if (timerText != null)
         {
             float remainingTime = Mathf.Max(timeLimit - timer, 0f);
-            timerText.text = $"Tiempo restante: {remainingTime:F1} s";
+            timerText.text = $"Time left: {remainingTime:F1} s";
         }
     }
 
@@ -97,6 +97,7 @@ public class LevelManager : MonoBehaviour
         PauseMenuCanvas.enabled = false;
         HudCanvas.enabled = false;
         YouLoseCanvas.enabled = true;
+        YouWinCanvas.enabled = false;
         Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
