@@ -1,226 +1,173 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviour
 {
-    [Header("General")] 
-    public List<itemType> inventoryList;
-    public int selectedItem = 0;
-    public float playerReach = 6;
-    [SerializeField] GameObject throwItem_GameObject;
-    
-    [Space(4)]
-    [Header("Keys")]
-    [SerializeField] KeyCode throwItemKey;
-    [SerializeField] KeyCode pickItemKey;
-    
-    [Space(4)]
-    [Header("Item gameobjects")]
-    [SerializeField] GameObject woodlog_item;
-    [SerializeField] GameObject medkit_item;
-    
-    [Space(4)]
-    [Header("Item prefabs")]
-    [SerializeField] GameObject woodlog_prefab;
-    [SerializeField] GameObject medkit_prefab;
+    [Header("Configuración General")] public List<ItemSO> inventory = new List<ItemSO>();
+    public int maxInventorySize = 4; // Tamaño máximo de la hotbar
+    private int selectedIndex = 0; // Índice del objeto seleccionado
 
-    [Space(4)]
-    [Header("UI")]
-    [SerializeField] Image[] inventorySlotImage = new Image[4];
-    [SerializeField] Image[] inventoryBackgroundImage = new Image[4];
-    [SerializeField] Sprite emptySlotSprite;
+    [Header("Configuración de Entrada")] public KeyCode throwItemKey = KeyCode.Q; // Tecla para lanzar
+    public KeyCode pickItemKey = KeyCode.E; // Tecla para recoger
+
+    [Header("UI de la Hotbar")] public Image[] hotbarSlots; // Imagen de las ranuras de la hotbar
+    public Image[] slotBackgrounds;
+    public Sprite emptySlotSprite; 
+    public Color selectedColor = Color.green; 
+    public Color defaultColor = Color.white;
+    
+    [Header("Configuración de Lanzamiento")]
+    public Transform throwPosition; // Posición desde donde se lanzará el objeto
+
+    public GameObject woodPrefab; // Prefab del objeto madera
+    public GameObject medkitPrefab; // Prefab del objeto botiquín
+    
     
 
-    [SerializeField] Camera cam;
-    [SerializeField] GameObject pickUp_gameObject;
-    
-    private Dictionary<itemType, GameObject> itemSetActive = new Dictionary<itemType, GameObject>() { };
-    private Dictionary<itemType, GameObject> itemInstantiate = new Dictionary<itemType, GameObject>() { };
-    private Dictionary<itemType, int> inventory = new Dictionary<itemType, int>();
-
+    private Dictionary<ItemType, GameObject> itemPrefabs;
 
     void Start()
     {
-        // Asociamos tipos de objetos con sus GameObjects
-        itemSetActive.Add(itemType.WoodLog, woodlog_item);
-        itemSetActive.Add(itemType.Medkit, medkit_item);
-        
-        itemInstantiate.Add(itemType.WoodLog, woodlog_prefab);
-        itemInstantiate.Add(itemType.Medkit, medkit_prefab);
-        
-        selectedItem = 0;
-        UpdateHotbarUI();
-        NewItemSelected();
+        // Inicializamos el diccionario de prefabs
+        itemPrefabs = new Dictionary<ItemType, GameObject>
+        {
+            { ItemType.Wood, woodPrefab },
+            { ItemType.Medkit, medkitPrefab }
+        };
+
+        UpdateHotbarUI(); // Actualizar la UI de la hotbar
     }
 
     void Update()
     {
-        //Items pickup
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hitInfo;
+        HandlePickup();
+        HandleThrow();
+        HandleSelection();
+    }
 
-        if (Physics.Raycast(ray, out hitInfo, playerReach))
+    private void HandlePickup()
+    {
+        if (Input.GetKeyDown(pickItemKey))
         {
-            Debug.Log($"Impacto con: {hitInfo.collider.name}"); // Verifica qué objeto impacta
-            IPickable item = hitInfo.collider.GetComponent<IPickable>();
-            if (item != null)
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, 5f))
             {
-                pickUp_gameObject.SetActive(true);
-                if (Input.GetKey(pickItemKey))
+                ItemPickable pickable = hit.collider.GetComponent<ItemPickable>();
+                if (pickable != null && inventory.Count < maxInventorySize)
                 {
-                    if (inventoryList.Count < inventorySlotImage.Length)
-                    {
-                        inventoryList.Add(hitInfo.collider.GetComponent<ItemPickable>().itemScriptableObject.item_type);
-                        item.PickItem();
-                        UpdateHotbarUI();
-                    }
-                    else
-                    {
-                        Debug.Log("Inventario lleno");
-                    }
+                    inventory.Add(pickable.itemData); // Agregar al inventario
+                    pickable.PickItem();
+                    UpdateHotbarUI();
                 }
             }
-            else
+            
+        }
+    }
+
+    private void HandleThrow()
+    {
+        if (Input.GetKeyDown(throwItemKey) && inventory.Count > 0)
+        {
+            ItemSO selectedItem = inventory[selectedIndex];
+            if (itemPrefabs.TryGetValue(selectedItem.itemType, out GameObject prefab))
             {
-                pickUp_gameObject.SetActive(false);
+                // Obtener el RectTransform del slot seleccionado
+                RectTransform slotRect = hotbarSlots[selectedIndex].rectTransform;
+
+                // Obtener la posición de pantalla del slot
+                Vector3 screenPosition = slotRect.position;
+                screenPosition.z = Camera.main.nearClipPlane; // Ajustar la profundidad
+
+                // Convertir la posición de pantalla a una posición en el mundo
+                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+
+                // Ajustar la altura de la posición (ajusta este valor según tus necesidades)
+                worldPosition.y += 1.0f;
+
+                // Instanciar el objeto en la posición calculada
+                Instantiate(prefab, worldPosition, Quaternion.identity);
+
+                inventory.RemoveAt(selectedIndex);
+                selectedIndex = FindNextValidIndex(selectedIndex);
+                UpdateHotbarUI();
             }
         }
-        else
+    }
+
+    private void HandleSelection()
+    {
+        // Cambiar selección con teclas 1-4
+        for (int i = 0; i < maxInventorySize; i++)
         {
-            pickUp_gameObject.SetActive(false);
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+            {
+                if (i < inventory.Count) // Solo selecciona si hay un objeto en esa ranura
+                {
+                    selectedIndex = i;
+                    UpdateHotbarUI();
+                }
+            }
         }
 
-        //Items throw
-        if (Input.GetKey(throwItemKey) && inventoryList.Count > 1)
+        // Cambiar selección con scroll, limitado entre 0 y maxInventorySize - 1
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0 && inventory.Count > 0)
         {
-            // Obtén el tipo de objeto a lanzar
-            var itemToDrop = inventoryList[selectedItem];
-
-            // Instanciar el objeto lanzado
-            Instantiate(itemInstantiate[itemToDrop], throwItem_GameObject.transform.position, Quaternion.identity);
-
-            // Eliminar el objeto del inventario
-            inventoryList.RemoveAt(selectedItem);
-
-            // Ajustar el índice seleccionado si el último objeto fue eliminado
-            if (selectedItem >= inventoryList.Count)
-                selectedItem = Mathf.Max(0, inventoryList.Count - 1);
+            if (scroll > 0 && selectedIndex < maxInventorySize - 1)
+            {
+                // Avanzar al siguiente índice si no estamos en el último
+                selectedIndex++;
+            }
+            else if (scroll < 0 && selectedIndex > 0)
+            {
+                // Retroceder al índice anterior si no estamos en el primero
+                selectedIndex--;
+            }
 
             UpdateHotbarUI();
         }
-
-
-        
-
-        
-
-        int a = 0;
-
-        foreach (Image image in inventoryBackgroundImage)
-        {
-            if (a == selectedItem)
-            {
-                image.color = new Color32 (145, 255, 126, 255);
-            }
-            else
-            {
-                image.color = new Color32 (255, 255, 255, 255);
-            }
-
-            a++;
-        }
-        
-        HandleMouseWheel();
-        HandleHotkeys();
     }
-    
-    //UI
-    
+
+
     private void UpdateHotbarUI()
     {
-        int slotsToUpdate = Mathf.Min(inventorySlotImage.Length, inventoryList.Count);
-
-        for (int i = 0; i < inventorySlotImage.Length; i++)
+        for (int i = 0; i < maxInventorySize; i++)
         {
-            if (i < slotsToUpdate)
+            if (i < inventory.Count)
             {
-                inventorySlotImage[i].sprite = itemSetActive[inventoryList[i]].GetComponent<Item>().itemScriptableObject.item_sprite;
+                hotbarSlots[i].sprite = inventory[i].itemSprite;
+                hotbarSlots[i].enabled = true;
             }
             else
             {
-                inventorySlotImage[i].sprite = emptySlotSprite;
+                hotbarSlots[i].sprite = emptySlotSprite;
+                hotbarSlots[i].enabled = true;
             }
 
-            // Actualizar el color de la cuadrícula según la selección
-            inventoryBackgroundImage[i].color = (i == selectedItem)
-                ? new Color32(145, 255, 126, 255) // Verde
-                : new Color32(255, 255, 255, 255); // Blanco
+            slotBackgrounds[i].color = i == selectedIndex ? selectedColor : defaultColor;
         }
     }
 
 
-
-
-    private void HandleMouseWheel()
+    private int FindNextValidIndex(int startIndex)
     {
-        if (inventoryList.Count == 0) return;
+        if (inventory.Count == 0) return 0; // Si no hay objetos, devolver 0
 
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        int index = (startIndex + maxInventorySize) % maxInventorySize; // Ajustar índice en rango
 
-        if (scroll > 0f)
+        // Caso especial: si se elimina el último elemento, empezar desde el principio
+        if (index >= inventory.Count)
         {
-            selectedItem = (selectedItem + 1) % inventoryList.Count; // Ciclar hacia adelante
-            NewItemSelected();
+            index = 0;
         }
-        else if (scroll < 0f)
+
+        while (index >= inventory.Count) // Saltar ranuras vacías
         {
-            selectedItem = (selectedItem - 1 + inventoryList.Count) % inventoryList.Count; // Ciclar hacia atrás
-            NewItemSelected();
+            index = (index + 1) % maxInventorySize;
         }
+
+        return index;
     }
-
-    private void HandleHotkeys()
-    {
-        if (inventoryList.Count == 0) return;
-
-        for (int i = 0; i < inventoryList.Count; i++)
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha1 + i)) // Detecta las teclas 1, 2, 3, ..., 9
-            {
-                selectedItem = i;
-                NewItemSelected();
-                break;
-            }
-        }
-    }
-
-    private void NewItemSelected()
-    {
-        // Desactiva todos los objetos en `itemSetActive`
-        foreach (var item in itemSetActive.Values)
-        {
-            if (item != null)
-                item.SetActive(false); // Asegúrate de no activar objetos nulos
-        }
-
-        // Verifica que hay elementos en el inventario antes de activar
-        if (inventoryList.Count > 0 && selectedItem < inventoryList.Count)
-        {
-            var selectedItemType = inventoryList[selectedItem];
-            if (itemSetActive.TryGetValue(selectedItemType, out var selectedItemGameObject) && selectedItemGameObject != null)
-            {
-                selectedItemGameObject.SetActive(true);
-            }
-        }
-    }
-
-
-}
-
-public interface IPickable
-{
-    void PickItem();
 }

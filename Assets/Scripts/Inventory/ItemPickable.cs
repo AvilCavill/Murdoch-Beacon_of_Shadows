@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemPickable : MonoBehaviour, IPickable
+public class ItemPickable : MonoBehaviour
 {
-   public ItemSO itemScriptableObject;
+    public ItemSO itemData; // Datos del objeto (tipo, sprite, etc.)
 
-   public void PickItem()
-   {
-      Destroy(gameObject);
-   }
+    public void PickItem()
+    {
+        Destroy(gameObject); // Destruir el objeto del mundo al recogerlo
+    }
 }
