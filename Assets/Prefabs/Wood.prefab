@@ -12,12 +12,10 @@ GameObject:
   - component: {fileID: 384780864625379137}
   - component: {fileID: 2199036020050513457}
   - component: {fileID: 5345036846227395514}
-  - component: {fileID: -6936071920606641537}
   - component: {fileID: 5798268065673793478}
   - component: {fileID: 1253902877380764807}
   - component: {fileID: 6443973002684532450}
-  - component: {fileID: 1065624793839737490}
-  - component: {fileID: 1347929978511126795}
+  - component: {fileID: 3633100054464986063}
   m_Layer: 0
   m_Name: Wood
   m_TagString: Untagged
@@ -102,19 +100,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &-6936071920606641537
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3048580772900242495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf2e19816525cf9428d3e389e422e9d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeToAdd: 3
 --- !u!54 &5798268065673793478
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -158,20 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   highlightMaterial: {fileID: 2100000, guid: bbb235fff4f48426b863b36058ab66d2, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 14df40d75f024ff697254789566332c8, type: 2}
---- !u!114 &1065624793839737490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3048580772900242495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d28cf76a0242ebe4f85a93f1268587dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemScriptableObject: {fileID: 11400000, guid: 90747848fe47b5a46ac66b56313c22de, type: 2}
---- !u!114 &1347929978511126795
+--- !u!114 &3633100054464986063
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -183,4 +155,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04a8b7b41d2a44140a0ad063fc0a3be3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemScriptableObject: {fileID: 11400000, guid: 90747848fe47b5a46ac66b56313c22de, type: 2}
+  itemData: {fileID: 11400000, guid: 289f1c9e184006643af25c892cec0eda, type: 2}

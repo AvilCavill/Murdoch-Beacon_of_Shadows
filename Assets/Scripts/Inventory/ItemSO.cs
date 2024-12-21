@@ -1,15 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Item", menuName = "Scriptable Objects/Item")]
+[CreateAssetMenu(fileName = "NewItem", menuName = "Scriptable Objects/Item")]
 public class ItemSO : ScriptableObject
 {
-   [Header("Properties")]
-   public float cooldown;
-
-   public itemType item_type;
-   public Sprite item_sprite;
+    public string itemName; // Nombre del objeto
+    public Sprite itemSprite; // Sprite para la hotbar
+    public ItemType itemType; // Tipo del objeto
 }
 
-public enum itemType {WoodLog, Medkit}
+public enum ItemType
+{
+    Wood,
+    Medkit
+}

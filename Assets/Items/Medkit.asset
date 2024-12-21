@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b0d9acc63ba54042b1d39575ae74d39, type: 3}
   m_Name: Medkit
   m_EditorClassIdentifier: 
-  cooldown: 0
-  item_type: 1
-  item_sprite: {fileID: 0}
+  itemName: MedKit
+  itemSprite: {fileID: 21300000, guid: d9d4bd79ca4778543a9c25d0c542c89b, type: 3}
+  itemType: 1
