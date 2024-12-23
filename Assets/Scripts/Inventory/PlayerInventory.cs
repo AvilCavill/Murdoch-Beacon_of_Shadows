@@ -131,7 +131,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    private void UpdateHotbarUI()
+    public void UpdateHotbarUI()
     {
         for (int i = 0; i < maxInventorySize; i++)
         {
