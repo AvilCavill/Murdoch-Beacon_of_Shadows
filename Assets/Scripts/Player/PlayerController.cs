@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     // Referencia al sistema de stamina
     public StaminaBarSystem staminaSystem;
     public float staminaDrainRate = 10f; // Tasa de consumo de estamina por segundo
+    
+    //Sistema de esconderse
+    private bool isHiding = false;
 
     private void Start()
     {
@@ -81,4 +84,20 @@ public class PlayerController : MonoBehaviour
         Vector3 rotation = new Vector3(0, orientation.eulerAngles.y, 0);
         transform.eulerAngles = rotation;
     }
+
+    public void SetHiding(bool hiding)
+    {
+        isHiding = hiding;
+        
+        controller.enabled = !hiding;
+        walkingSound.enabled = !hiding;
+        runningSound.enabled = !hiding;
+        
+    }
+
+    public bool IsHiding()
+    {
+        return isHiding;
+    }
+    
 }
