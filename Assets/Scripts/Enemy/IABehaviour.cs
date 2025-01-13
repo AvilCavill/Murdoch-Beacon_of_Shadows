@@ -43,7 +43,13 @@ public class IABehaviour : MonoBehaviour
     void Update()
     {
         temporizadorAtaque += Time.deltaTime;
-
+        if (jugador != null && jugador.GetComponent<PlayerController>().IsHiding())
+        {
+            // Si el jugador está escondido, el enemigo vuelve a patrullar
+            persiguiendo = false;
+            agente.SetDestination(puntosDePatrulla[indiceActual].position);
+            animator.SetTrigger("Patrol");
+        }
         if (persiguiendo)
         {
             if (Vector3.Distance(transform.position, jugador.position) <= distanciaAtaque)
