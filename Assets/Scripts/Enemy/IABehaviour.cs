@@ -127,10 +127,10 @@ public class IABehaviour : MonoBehaviour
             temporizadorAtaque = 0f; // Reinicia el temporizador
 
             // // Cambia a la animación de ataque
-            // if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Bite_Action"))
-            // {
-            //     animator.SetTrigger("Attack");
-            // }
+            if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Bite_Action"))
+            {
+                animator.SetTrigger("PlayerIsNear");
+            }
 
             // Lógica de daño
             

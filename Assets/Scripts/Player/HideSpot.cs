@@ -6,7 +6,7 @@ using UnityEngine;
 public class HideSpot : MonoBehaviour
 {
     public Transform hidePoint; // Punto donde el jugador se esconde
-    public float exitOffset = 1.5f; // Distancia delante del armario al salir
+    public Transform exitArea; // Área donde el jugador aparece al salir del escondite
     private bool isPlayerNear = false;
     public GameObject hideText;
 
@@ -37,27 +37,33 @@ public class HideSpot : MonoBehaviour
     {
         if (isPlayerNear && Input.GetKeyDown(KeyCode.E))
         {
+            // Obtener referencia al jugador
             PlayerController player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
-         
+            
             if (player.IsHiding())
             {
                 // Salir del escondite
                 player.SetHiding(false);
 
-                // Calcular posición delante del armario
-                Vector3 exitPosition = hidePoint.position + (transform.forward * exitOffset);
-                exitPosition.y = player.transform.position.y; // Mantener altura actual del jugador
+                // Mover al jugador al área de salida
+                if (exitArea != null)
+                {
+                    player.transform.position = exitArea.position;
+                }
+                else
+                {
+                    Debug.LogWarning("ExitArea no está asignado en el HideSpot.");
+                }
 
-                // Mover al jugador
-                player.transform.position = exitPosition;
-
-                hideText.SetActive(false);
+                hideText.SetActive(true); // Mostrar el texto nuevamente
             }
             else
             {
                 // Entrar al escondite
                 player.transform.position = hidePoint.position;
                 player.SetHiding(true);
+
+                hideText.SetActive(false); // Ocultar el texto
             }
         }
     }
