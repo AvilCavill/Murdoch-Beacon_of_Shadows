@@ -35,6 +35,7 @@ public class FuelSystem : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerInZone = false;
+            addWoodText.SetActive(false);
         }
     }
 
@@ -59,6 +60,7 @@ public class FuelSystem : MonoBehaviour
 
             // Añadir tiempo al faro
             levelManager.AddTime(fuelTime);
+            
         }
         else
         {

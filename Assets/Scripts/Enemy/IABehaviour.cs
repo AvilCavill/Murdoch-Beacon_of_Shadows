@@ -36,7 +36,7 @@ public class IABehaviour : MonoBehaviour
         if (puntosDePatrulla.Length > 0)
         {
             agente.SetDestination(puntosDePatrulla[indiceActual].position);
-            animator.SetTrigger("Patrol"); // Cambia al estado de patrulla
+            animator.SetBool("Patrol", true);
         }
     }
 
@@ -81,7 +81,7 @@ public class IABehaviour : MonoBehaviour
         // Cambiar animación a "Patrulla" si no está persiguiendo ni atacando
         if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Crouch_Action"))
         {
-            animator.SetTrigger("Patrol");
+            animator.SetBool("Patrol", true);
         }
     }
 
@@ -110,7 +110,7 @@ public class IABehaviour : MonoBehaviour
                     agente.SetDestination(puntosDePatrulla[indiceActual].position);
 
                     // Vuelve a la animación de patrulla
-                    animator.SetTrigger("Patrol");
+                    animator.SetBool("Patrol", true);
                 }
             }
             else
