@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.0042762733, g: 0.0042762733, b: 0.0042762733, a: 1}
+  m_IndirectSpecularColor: {r: 0.2139894, g: 0.2139894, b: 0.2139894, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -12176,6 +12176,32 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1166534483 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5249906580856196748, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
+  m_PrefabInstance: {fileID: 2066978498}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1166534485
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166534483}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4170ac9a0e3808443adbf83b5209ce7e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1189939709
 GameObject:
   m_ObjectHideFlags: 0
@@ -56288,6 +56314,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7440230003808341372, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7440230003808341372, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 0}
@@ -56307,7 +56337,8 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -2.85
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7440230003808341372, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
 --- !u!1 &2066978499 stripped
 GameObject:
@@ -91311,6 +91342,7 @@ MonoBehaviour:
   staminaDrainRate: 10
   staminaRegenRate: 5
   runKey: 304
+  healthBarSystem: {fileID: 1271726468}
 --- !u!1 &2093074524
 GameObject:
   m_ObjectHideFlags: 0

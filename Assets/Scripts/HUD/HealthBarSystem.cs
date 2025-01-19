@@ -72,4 +72,9 @@ public class HealthBarSystem : MonoBehaviour
         fill.enabled = false;
         background.enabled = false;
     }
+
+    public float GetHealthPercentage()
+    {
+        return health / maxHealth * 100.0f;
+    }
 }

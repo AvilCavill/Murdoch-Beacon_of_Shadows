@@ -13,6 +13,7 @@ public class StaminaBarSystem : MonoBehaviour
     public float staminaDrainRate = 15.0f; // Tasa de consumo por segundo
     public float staminaRegenRate = 10.0f; // Tasa de regeneración por segundo
     public KeyCode runKey = KeyCode.LeftShift; // Tecla para correr
+    public HealthBarSystem healthBarSystem;
 
     private bool isRunning = false;
 
@@ -32,8 +33,15 @@ public class StaminaBarSystem : MonoBehaviour
 
         if (isRunning)
         {
+            float healthPercentage = healthBarSystem.GetHealthPercentage();
+            float adjustedStaminaDrainRate = staminaDrainRate;
+
+            if (healthPercentage < 50.0f)
+            {
+                adjustedStaminaDrainRate *= 2.0f; // Aumenta el consumo de stamina en un 50%
+            }
             // Reducir estamina
-            stamina -= staminaDrainRate * Time.deltaTime;
+            stamina -= adjustedStaminaDrainRate * Time.deltaTime;
             stamina = Mathf.Clamp(stamina, 0, maxStamina); // Asegurarse de que no sea menor que 0
             ShowStaminaBar();
         }

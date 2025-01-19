@@ -32,11 +32,12 @@ public class IABehaviour : MonoBehaviour
     {
         agente = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-
+        animator.SetBool("Patrol", true);
+        
         if (puntosDePatrulla.Length > 0)
         {
             agente.SetDestination(puntosDePatrulla[indiceActual].position);
-            animator.SetBool("Patrol", true);
+            
         }
     }
 
@@ -48,7 +49,7 @@ public class IABehaviour : MonoBehaviour
             // Si el jugador está escondido, el enemigo vuelve a patrullar
             persiguiendo = false;
             agente.SetDestination(puntosDePatrulla[indiceActual].position);
-            animator.SetTrigger("Patrol");
+            animator.SetBool("Patrol", true);
         }
         if (persiguiendo)
         {
@@ -122,6 +123,7 @@ public class IABehaviour : MonoBehaviour
 
     void AtacarJugador()
     {
+        animator.SetBool("Patrol", false);
         if (temporizadorAtaque >= tiempoEntreAtaques)
         {
             temporizadorAtaque = 0f; // Reinicia el temporizador
@@ -129,7 +131,7 @@ public class IABehaviour : MonoBehaviour
             // // Cambia a la animación de ataque
             if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Bite_Action"))
             {
-                animator.SetTrigger("PlayerIsNear");
+                animator.SetTrigger("Attack");
             }
 
             // Lógica de daño
