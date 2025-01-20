@@ -59,6 +59,7 @@ public class IABehaviour : MonoBehaviour
             }
             else
             {
+                animator.SetBool("PlayerIsNear", false);
                 PerseguirJugador(); // Persigue si está fuera del rango de ataque
             }
         }
@@ -129,10 +130,10 @@ public class IABehaviour : MonoBehaviour
             temporizadorAtaque = 0f; // Reinicia el temporizador
 
             // // Cambia a la animación de ataque
-            if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Bite_Action"))
-            {
+            
                 animator.SetTrigger("Attack");
-            }
+                animator.SetBool("PlayerIsNear", true);
+            
 
             // Lógica de daño
             

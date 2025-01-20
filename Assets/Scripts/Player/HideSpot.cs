@@ -9,10 +9,12 @@ public class HideSpot : MonoBehaviour
     public Transform exitArea; // Área donde el jugador aparece al salir del escondite
     private bool isPlayerNear = false;
     public GameObject hideText;
+    public GameObject exitText;
 
     private void Start()
     {
         hideText.SetActive(false);
+        exitText.SetActive(false);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -30,6 +32,7 @@ public class HideSpot : MonoBehaviour
         {
             isPlayerNear = false;
             hideText.SetActive(false);
+            exitText.SetActive(false);
         }
     }
 
@@ -39,7 +42,7 @@ public class HideSpot : MonoBehaviour
         {
             // Obtener referencia al jugador
             PlayerController player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
-            
+
             if (player.IsHiding())
             {
                 // Salir del escondite
@@ -55,7 +58,8 @@ public class HideSpot : MonoBehaviour
                     Debug.LogWarning("ExitArea no está asignado en el HideSpot.");
                 }
 
-                hideText.SetActive(true); // Mostrar el texto nuevamente
+                hideText.SetActive(false); // Asegurar que el texto de entrada esté oculto
+                exitText.SetActive(false); // Ocultar el texto de salida
             }
             else
             {
@@ -63,8 +67,15 @@ public class HideSpot : MonoBehaviour
                 player.transform.position = hidePoint.position;
                 player.SetHiding(true);
 
-                hideText.SetActive(false); // Ocultar el texto
+                hideText.SetActive(false); // Ocultar el texto de entrada
+                exitText.SetActive(true); // Mostrar el texto de salida
             }
+        }
+
+        // Ocultar el texto de entrada si el jugador está escondido
+        if (GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().IsHiding())
+        {
+            hideText.SetActive(false);
         }
     }
 }
