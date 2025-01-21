@@ -7,7 +7,7 @@ public class PlayerInventory : MonoBehaviour
 {
     [Header("Configuración General")] public List<ItemSO> inventory = new List<ItemSO>();
     public int maxInventorySize = 4; // Tamaño máximo de la hotbar
-    private int selectedIndex = 0; // Índice del objeto seleccionado
+    public int selectedIndex = 0; // Índice del objeto seleccionado
 
     [Header("Configuración de Entrada")] public KeyCode throwItemKey = KeyCode.Q; // Tecla para lanzar
     public KeyCode pickItemKey = KeyCode.E; // Tecla para recoger
@@ -23,6 +23,7 @@ public class PlayerInventory : MonoBehaviour
 
     public GameObject woodPrefab; // Prefab del objeto madera
     public GameObject medkitPrefab; // Prefab del objeto botiquín
+    public GameObject batteryUV;
     
     
 
@@ -34,7 +35,8 @@ public class PlayerInventory : MonoBehaviour
         itemPrefabs = new Dictionary<ItemType, GameObject>
         {
             { ItemType.Wood, woodPrefab },
-            { ItemType.Medkit, medkitPrefab }
+            { ItemType.Medkit, medkitPrefab },
+            { ItemType.BatteryUV, batteryUV}
         };
 
         UpdateHotbarUI(); // Actualizar la UI de la hotbar

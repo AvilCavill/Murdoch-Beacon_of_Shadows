@@ -27,6 +27,10 @@ public class IABehaviour : MonoBehaviour
     private float tiempoSinVerJugador = 0f;
     private float temporizadorAtaque = 0f;
     public HealthBarSystem healthBarSystem;
+    
+    [Header("Stun")]
+    private bool isStunned = false;
+    private float stunTimer = 0f;
 
     void Start()
     {
@@ -43,6 +47,16 @@ public class IABehaviour : MonoBehaviour
 
     void Update()
     {
+        if (isStunned)
+        {
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0)
+            {
+                isStunned = false;
+                // Restaurar comportamiento normal del enemigo
+                EnableEnemyAI();
+            }
+        }
         temporizadorAtaque += Time.deltaTime;
         if (jugador != null && jugador.GetComponent<PlayerController>().IsHiding())
         {
@@ -69,6 +83,26 @@ public class IABehaviour : MonoBehaviour
             DetectarJugador();
         }
     }
+
+    public void Stun(float duration)
+    {
+        isStunned = true;
+        stunTimer = duration;
+        // Desactivar comportamiento del enemigo mientras está aturdido
+        DisableEnemyAI();
+        Debug.Log("Enemigo aturdido por " + duration + " segundos.");
+    }
+
+    private void DisableEnemyAI()
+    {
+        throw new System.NotImplementedException();
+    }
+    
+    private void EnableEnemyAI()
+    {
+        throw new System.NotImplementedException();
+    }
+
 
     void Patrullar()
     {

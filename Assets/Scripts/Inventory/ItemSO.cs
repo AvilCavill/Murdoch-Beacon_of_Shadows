@@ -11,5 +11,6 @@ public class ItemSO : ScriptableObject
 public enum ItemType
 {
     Wood,
-    Medkit
+    Medkit,
+    BatteryUV
 }
