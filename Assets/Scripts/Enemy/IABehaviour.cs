@@ -53,28 +53,30 @@ public class IABehaviour : MonoBehaviour
             if (stunTimer <= 0)
             {
                 isStunned = false;
-                // Restaurar comportamiento normal del enemigo
-                EnableEnemyAI();
+                EnableEnemyAI(); // Restaura el comportamiento normal
             }
+            return; // No ejecutar más lógica si el enemigo está aturdido
         }
+
         temporizadorAtaque += Time.deltaTime;
+
         if (jugador != null && jugador.GetComponent<PlayerController>().IsHiding())
         {
-            // Si el jugador está escondido, el enemigo vuelve a patrullar
             persiguiendo = false;
             agente.SetDestination(puntosDePatrulla[indiceActual].position);
             animator.SetBool("Patrol", true);
         }
+
         if (persiguiendo)
         {
             if (Vector3.Distance(transform.position, jugador.position) <= distanciaAtaque)
             {
-                AtacarJugador(); // Ataca si está lo suficientemente cerca
+                AtacarJugador();
             }
             else
             {
                 animator.SetBool("PlayerIsNear", false);
-                PerseguirJugador(); // Persigue si está fuera del rango de ataque
+                PerseguirJugador();
             }
         }
         else
@@ -95,12 +97,14 @@ public class IABehaviour : MonoBehaviour
 
     private void DisableEnemyAI()
     {
-        throw new System.NotImplementedException();
+        agente.isStopped = true;
+        animator.SetBool("Stunned", true);
     }
     
     private void EnableEnemyAI()
     {
-        throw new System.NotImplementedException();
+        agente.isStopped = false;
+        animator.SetBool("Stunned", false);
     }
 
 
@@ -165,6 +169,7 @@ public class IABehaviour : MonoBehaviour
 
             // // Cambia a la animación de ataque
             
+                animator.SetTrigger("Attack");
                 animator.SetTrigger("Attack");
                 animator.SetBool("PlayerIsNear", true);
             

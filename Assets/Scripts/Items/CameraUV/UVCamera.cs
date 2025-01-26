@@ -77,19 +77,17 @@ namespace Items.CameraUV
         void UseFlash()
         {
             GetComponent<CameraFlash>().TriggerFlash();
-        
             // Reducir usos y mostrar el efecto del flash
             currentUses--;
-
-            
 
             // Buscar enemigos en el rango del flash UV
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, flashRange);
             foreach (var hitCollider in hitColliders)
             {
-                if (hitCollider.CompareTag("Enemy"))
+                IABehaviour enemyAI = hitCollider.GetComponent<IABehaviour>();
+                if (enemyAI != null)
                 {
-                    StunEnemy(hitCollider.gameObject);
+                    enemyAI.Stun(3f); // Aturdir por 3 segundos
                 }
             }
 
