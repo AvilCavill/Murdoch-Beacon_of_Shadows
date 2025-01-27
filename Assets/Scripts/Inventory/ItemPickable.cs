@@ -4,8 +4,10 @@ public class ItemPickable : MonoBehaviour
 {
     public ItemSO itemData; // Datos del objeto (tipo, sprite, etc.)
 
-    public void PickItem()
+    public void PickItem(Transform handTransform)
     {
-        Destroy(gameObject); // Destruir el objeto del mundo al recogerlo
+        //Añadimos el objeto como hijo de Hand del Player
+        GameObject itemInstance = Instantiate(itemData.itemPrefab, handTransform);
+        Destroy(gameObject);
     }
 }

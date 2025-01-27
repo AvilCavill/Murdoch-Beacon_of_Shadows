@@ -15,3 +15,4 @@ MonoBehaviour:
   itemName: Wood
   itemSprite: {fileID: 21300000, guid: 319b97d76e1db7544b2e3dba543dae41, type: 3}
   itemType: 0
+  itemPrefab: {fileID: 3048580772900242495, guid: 18549e4c6ca8f6049be6f7a1c51f173d, type: 3}

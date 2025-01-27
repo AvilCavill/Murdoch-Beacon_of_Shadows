@@ -15,3 +15,4 @@ MonoBehaviour:
   itemName: MedKit
   itemSprite: {fileID: 21300000, guid: d9d4bd79ca4778543a9c25d0c542c89b, type: 3}
   itemType: 1
+  itemPrefab: {fileID: 362743487819491491, guid: 343e74f4fefde0c4e838ae31ff120ea3, type: 3}

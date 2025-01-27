@@ -60,7 +60,7 @@ public class PlayerInventory : MonoBehaviour
                 if (pickable != null && inventory.Count < maxInventorySize)
                 {
                     inventory.Add(pickable.itemData); // Agregar al inventario
-                    pickable.PickItem();
+                    pickable.PickItem(throwPosition);
                     UpdateHotbarUI();
                 }
             }
@@ -75,22 +75,28 @@ public class PlayerInventory : MonoBehaviour
             ItemSO selectedItem = inventory[selectedIndex];
             if (itemPrefabs.TryGetValue(selectedItem.itemType, out GameObject prefab))
             {
-                // Obtener el RectTransform del slot seleccionado
-                RectTransform slotRect = hotbarSlots[selectedIndex].rectTransform;
+                // Instanciar el ítem en la posición de la mano o jugador
+                GameObject thrownItem = Instantiate(
+                    prefab,
+                    throwPosition.position,          // Posición inicial
+                    throwPosition.rotation           // Rotación inicial (hacia donde mira el jugador)
+                );
 
-                // Obtener la posición de pantalla del slot
-                Vector3 screenPosition = slotRect.position;
-                screenPosition.z = Camera.main.nearClipPlane; // Ajustar la profundidad
-
-                // Convertir la posición de pantalla a una posición en el mundo
-                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-
-                // Ajustar la altura de la posición (ajusta este valor según tus necesidades)
-                worldPosition.y += 1.0f;
-
-                // Instanciar el objeto en la posición calculada
-                Instantiate(prefab, worldPosition, Quaternion.identity);
-
+                thrownItem.transform.SetParent(null);
+                if (thrownItem.transform.childCount > 0)
+                {
+                    Transform child = thrownItem.transform.GetChild(0); // Obtener el primer hijo, puedes modificar esto según lo necesites
+                    Destroy(child.gameObject);  // Eliminar el hijo pero no el objeto principal
+                }
+                
+                // Añadir fuerza hacia adelante si el prefab tiene un Rigidbody
+                Rigidbody rb = thrownItem.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    float throwForce = 10f; // Ajusta la magnitud de la fuerza según sea necesario
+                    rb.AddForce(throwPosition.forward * throwForce, ForceMode.Impulse);
+                }
+    
                 inventory.RemoveAt(selectedIndex);
                 selectedIndex = FindNextValidIndex(selectedIndex);
                 UpdateHotbarUI();

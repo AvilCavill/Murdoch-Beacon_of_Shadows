@@ -15,3 +15,4 @@ MonoBehaviour:
   itemName: BatteryUV
   itemSprite: {fileID: 21300000, guid: babd3d647edba8940afeb124560b8431, type: 3}
   itemType: 2
+  itemPrefab: {fileID: 3560817951126773851, guid: b96bfa7492f4f4940955331a5d51c8b3, type: 3}
