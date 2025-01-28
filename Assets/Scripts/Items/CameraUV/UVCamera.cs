@@ -17,10 +17,14 @@ namespace Items.CameraUV
         public PlayerInventory playerInventory; // Referencia al inventario del jugador
         public bool hasUVCamera = false;
 
+        public GameObject cameraHUD; 
+        public GameObject pointer;
+
         private bool isUVCameraActive = true; // Indica si la cámara UV está activa
 
         void Start()
         {
+            cameraHUD.SetActive(false);
             currentUses = maxUses; // Inicializa con el máximo de usos
             ActivateUVCamera();
         }
@@ -61,6 +65,8 @@ namespace Items.CameraUV
 
         void ActivateUVCamera()
         {
+            cameraHUD.SetActive(true);
+            pointer.SetActive(false);
             isUVCameraActive = true;
             uvCameraObject.SetActive(true);
             flashlightObject.SetActive(false);
@@ -69,6 +75,8 @@ namespace Items.CameraUV
 
         void ActivateFlashlight()
         {
+            cameraHUD.SetActive(false);
+            pointer.SetActive(true);
             isUVCameraActive = false;
             flashlightObject.SetActive(true);
             Debug.Log("Linterna activada.");
