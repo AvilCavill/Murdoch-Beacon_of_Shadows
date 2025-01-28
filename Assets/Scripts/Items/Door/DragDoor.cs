@@ -1,83 +1,114 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class DragDoor : MonoBehaviour
+namespace Items.Door
 {
-    [SerializeField] Camera cam;
-    Transform selectedDoor;
-    GameObject dragPointGameobject;
-    int leftDoor = 0;
-    [SerializeField] LayerMask doorLayer;
-
-    void Update()
+    public class DragDoor : MonoBehaviour
     {
-        //Raycast
-        RaycastHit hit;
+        [SerializeField] private Camera playerCamera; // Cámara del jugador
+        [SerializeField] private LayerMask doorLayer; // Capa de las puertas
+        private HingeJoint currentDoorJoint; // La bisagra de la puerta seleccionada
+        private bool isDragging = false; // Si el jugador está arrastrando la puerta
+        private float dragMultiplier = 3f; // Sensibilidad del arrastre
+        private float returnSpeed = 50f; // Velocidad al volver a la posición inicial
+        private float returnThreshold = 3f; // Umbral para considerar la puerta "cerrada"
 
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 20, doorLayer))
+        void Update()
         {
+            // Detectar clic inicial en la puerta
             if (Input.GetMouseButtonDown(0))
             {
-                selectedDoor = hit.collider.gameObject.transform;
+                Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hit, 10f, doorLayer))
+                {
+                    HingeJoint joint = hit.collider.GetComponent<HingeJoint>();
+                    if (joint != null)
+                    {
+                        currentDoorJoint = joint;
+                        isDragging = true;
+                    }
+                }
+            }
+
+            // Arrastrar la puerta
+            if (isDragging && currentDoorJoint != null)
+            {
+                DragDoorWithMouse();
+            }
+
+            // Soltar la puerta
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (currentDoorJoint != null)
+                {
+                    currentDoorJoint.useMotor = false;
+                    currentDoorJoint = null;
+                }
+                isDragging = false;
+            }
+
+            // Volver la puerta a la posición inicial si no está siendo arrastrada
+            if (!isDragging && currentDoorJoint == null)
+            {
+                ResetDoorPosition();
             }
         }
 
-        if (selectedDoor != null)
+        private void DragDoorWithMouse()
         {
-            HingeJoint joint = selectedDoor.GetComponent<HingeJoint>();
-            JointMotor motor = joint.motor;
-
-            //Create drag point object for reference where players mouse is pointing
-            if (dragPointGameobject == null)
+            // Raycast para determinar la posición del mouse en el espacio 3D
+            Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+            Plane dragPlane = new Plane(Vector3.up, currentDoorJoint.transform.position);
+    
+            if (dragPlane.Raycast(ray, out float rayDistance))
             {
-                dragPointGameobject = new GameObject("Ray door");
-                dragPointGameobject.transform.parent = selectedDoor;
-            }
+                // Calcular el ángulo basado en el movimiento del mouse
+                Vector3 hitPoint = ray.GetPoint(rayDistance);
+                Vector3 direction = hitPoint - currentDoorJoint.transform.position;
+                direction.y = 0;
 
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            dragPointGameobject.transform.position = ray.GetPoint(Vector3.Distance(selectedDoor.position, transform.position));
-            dragPointGameobject.transform.rotation = selectedDoor.rotation;
-
-
-            float delta = Mathf.Pow(Vector3.Distance(dragPointGameobject.transform.position, selectedDoor.position), 3);
-
-           
-
-            //Applying velocity to door motor
-            float speedMultiplier = 60000;
-            if (Mathf.Abs(selectedDoor.parent.forward.z) > 0.5f)
-            {
-                if (dragPointGameobject.transform.position.x > selectedDoor.position.x)
+                // Solo aplicar fuerza si estamos arrastrando
+                if (isDragging)
                 {
-                    motor.targetVelocity = delta * -speedMultiplier * Time.deltaTime * leftDoor;
+                    float angle = Vector3.SignedAngle(currentDoorJoint.transform.forward, direction, Vector3.up);
+
+                    // Aplicar el ángulo como velocidad al motor
+                    JointMotor motor = currentDoorJoint.motor;
+                    motor.targetVelocity = angle * dragMultiplier;
+                    motor.force = 100f; // Fuerza máxima del motor
+                    currentDoorJoint.motor = motor;
+                    currentDoorJoint.useMotor = true; // Activar el motor solo cuando se esté arrastrando
                 }
                 else
                 {
-                    motor.targetVelocity = delta * speedMultiplier * Time.deltaTime * leftDoor;
+                    // Si no se está arrastrando, desactivamos el motor
+                    currentDoorJoint.useMotor = false;
                 }
             }
-            else
+        }
+
+        private void ResetDoorPosition()
+        {
+            foreach (HingeJoint hinge in FindObjectsOfType<HingeJoint>())
             {
-                if (dragPointGameobject.transform.position.z > selectedDoor.position.z)
+                // Obtener el ángulo actual de la puerta
+                float currentAngle = hinge.transform.localEulerAngles.y;
+                if (currentAngle > 180f) currentAngle -= 360f; // Ajustar ángulos negativos
+
+                // Calcular el paso para volver a la posición inicial
+                float step = returnSpeed * Time.deltaTime;
+                if (Mathf.Abs(currentAngle) > returnThreshold)
                 {
-                    motor.targetVelocity = delta * -speedMultiplier * Time.deltaTime * leftDoor;
+                    JointMotor motor = hinge.motor;
+                    motor.targetVelocity = -Mathf.Sign(currentAngle) * step;
+                    motor.force = 50f;
+                    hinge.motor = motor;
+                    hinge.useMotor = true;
                 }
                 else
                 {
-                    motor.targetVelocity = delta * speedMultiplier * Time.deltaTime * leftDoor;
+                    hinge.useMotor = false; // Detener el motor si está suficientemente cerca
                 }
-            }
-            joint.motor = motor;
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                selectedDoor = null;
-                motor.targetVelocity = 0;
-                joint.motor = motor;
-                Destroy(dragPointGameobject);
             }
         }
     }
-
 }

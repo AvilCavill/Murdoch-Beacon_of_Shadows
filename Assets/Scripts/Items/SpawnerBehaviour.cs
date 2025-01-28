@@ -35,18 +35,8 @@ public class SpawnerBehaviour : MonoBehaviour
 
         // Añade el tronco a la lista
         spawnedLogs.Add(newLog);
-
-        // Asegúrate de eliminar el tronco de la lista cuando sea recogido o destruido
-        newLog.GetComponent<LogPickup>().OnDestroyed += () => RemoveLog(newLog);
     }
 
-    void RemoveLog(GameObject log)
-    {
-        if (spawnedLogs.Contains(log))
-        {
-            spawnedLogs.Remove(log);
-        }
-    }
 
     private void OnDrawGizmosSelected()
     {
