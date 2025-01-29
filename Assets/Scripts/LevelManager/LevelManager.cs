@@ -13,8 +13,9 @@ public class LevelManager : MonoBehaviour
     public Canvas YouLoseCanvas;
     public Canvas YouWinCanvas; // Canvas para la victoria
     public HealthBarSystem HealthBarSystem;
+    public TMP_Text initalObjectiveText;
 
-    public float timeLimit = 60f;
+    public float timeLimit = 200f;
     private float timer;
     private bool gameLost = false;
     private bool gameWon = false; // Nuevo indicador para victoria
@@ -33,8 +34,15 @@ public class LevelManager : MonoBehaviour
         {
             timerText.text = $"Time left: {timeLimit:F1} s";
         }
+
+        StartCoroutine(HideTextAfterDelay());
     }
 
+    private IEnumerator HideTextAfterDelay()
+    {
+        yield return new WaitForSeconds(20);
+        initalObjectiveText.gameObject.SetActive(false);
+    }
     void Update()
     {
         if (HealthBarSystem.healthSlider.value <= 0)
@@ -55,7 +63,7 @@ public class LevelManager : MonoBehaviour
             }
 
             // Detectar si el jugador ha ganado
-            if (timer >= 110f) // Si han pasado 10 segundos
+            if (timer >= 250f) // Si han pasado 10 segundos
             {
                 YouWin();
             }
