@@ -16,11 +16,11 @@ namespace Items.Spawners
         void Start()
         {
             // Inicia un bucle de generación repetido
-            InvokeRepeating(nameof(SpawnLog), 1f, spawnInterval);
+            InvokeRepeating(nameof(SpawnItem), 1f, spawnInterval);
         }
 
     
-        void SpawnLog()
+        void SpawnItem()
         {
             // Comprueba si ya se ha alcanzado el máximo de items
             if (spawnedItems.Count >= maxItems)
@@ -37,10 +37,23 @@ namespace Items.Spawners
             // Crea el objeto   
             GameObject newItem = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
 
-            // Añade el tronco a la lista
+            ItemPickable itemPickable = newItem.GetComponent<ItemPickable>();
+            if (itemPickable != null)
+            {
+                itemPickable.OnItemPickedUp += RemoveItem;
+            }
+            
+            // Añade el item a la lista
             spawnedItems.Add(newItem);
         }
 
+        void RemoveItem(GameObject item)
+        {
+            if (spawnedItems.Contains(item))
+            {
+                spawnedItems.Remove(item);
+            }
+        }
 
         private void OnDrawGizmosSelected()
         {

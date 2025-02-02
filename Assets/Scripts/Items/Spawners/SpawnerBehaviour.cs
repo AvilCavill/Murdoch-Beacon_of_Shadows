@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Items.Spawners
@@ -34,11 +34,21 @@ namespace Items.Spawners
             // Crea el tronco
             GameObject newLog = Instantiate(logPrefab, spawnPosition, Quaternion.identity);
 
+            newLog.GetComponent<ItemPickable>().OnItemPickedUp += RemoveLog;
+
             // Añade el tronco a la lista
             spawnedLogs.Add(newLog);
         }
 
 
+        void RemoveLog(GameObject log)
+        {
+            if (spawnedLogs.Contains(log))
+            {
+                spawnedLogs.Remove(log);
+            }
+        }
+        
         private void OnDrawGizmosSelected()
         {
             // Dibuja el área de generación en la vista de escena
