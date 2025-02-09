@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,29 +10,37 @@ public class LevelManager : MonoBehaviour
     public Canvas HudCanvas;
     public Canvas PauseMenuCanvas;
     public Canvas YouLoseCanvas;
-    public Canvas YouWinCanvas; // Canvas para la victoria
+    public Canvas YouWinCanvas; 
     public HealthBarSystem HealthBarSystem;
     public TMP_Text initalObjectiveText;
+    public TMP_Text timerText;
+    public TMP_Text escapeText; // Texto de escape
 
+    public Transform escapePoint; // Punto al que el jugador debe llegar
     public float timeLimit = 200f;
+    public float WinTime = 300f;
+    public float escapeTime = 30f; // Tiempo extra para escapar
+
     private float timer;
     private bool gameLost = false;
-    private bool gameWon = false; // Nuevo indicador para victoria
+    private bool gameWon = false;
+    private bool escapePhase = false; // Nueva fase de escape
 
-    public TMP_Text timerText;
+    public GameObject escapeMarker; // Un marcador visual para el escape
 
     void Start()
     {
         YouDiedCanvas.enabled = false;
         YouLoseCanvas.enabled = false;
-        YouWinCanvas.enabled = false; // Asegurarse de que el Canvas de victoria esté desactivado
+        YouWinCanvas.enabled = false;
         timer = 0f;
+        escapeText.gameObject.SetActive(false); // Ocultar mensaje de escape
 
-        // Inicializar texto del temporizador
         if (timerText != null)
-        {
             timerText.text = $"Time left: {timeLimit:F1} s";
-        }
+
+        if (escapeMarker != null)
+            escapeMarker.SetActive(false); // Ocultar el marcador de escape hasta que sea necesario
 
         StartCoroutine(HideTextAfterDelay());
     }
@@ -43,46 +50,76 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(20);
         initalObjectiveText.gameObject.SetActive(false);
     }
+
     void Update()
     {
         if (HealthBarSystem.healthSlider.value <= 0)
         {
             YouDied();
+            return;
         }
 
-        if (!gameLost && !gameWon) // Procesar solo si no se perdió ni se ganó
+        if (!gameLost && !gameWon)
         {
             timer += Time.deltaTime;
 
-            // Calcular tiempo restante
-            float remainingTime = Mathf.Max(timeLimit - timer, 0f);
-
-            if (timerText != null)
+            if (!escapePhase)
             {
-                timerText.text = $"Time left: {remainingTime:F1} s";
-            }
+                float remainingTime = Mathf.Max(timeLimit - timer, 0f);
+                if (timerText != null)
+                    timerText.text = $"Time left: {remainingTime:F1} s";
 
-            // Detectar si el jugador ha ganado
-            if (timer >= 250f) // Si han pasado 10 segundos
+                if (timer >= WinTime)
+                {
+                    StartEscapePhase();
+                }
+                else if (remainingTime <= 0f)
+                {
+                    YouLost();
+                }
+            }
+            else
             {
-                YouWin();
-            }
+                float remainingEscapeTime = Mathf.Max(escapeTime - (timer - WinTime), 0f);
+                if (timerText != null)
+                    timerText.text = $"Escape Time: {remainingEscapeTime:F1} s";
 
-            // Detectar si el jugador ha perdido
-            if (remainingTime <= 0f)
-            {
-                YouLost();
+                if (remainingEscapeTime <= 0f)
+                {
+                    YouLost();
+                }
             }
+        }
+    }
 
-            
+    void StartEscapePhase()
+    {
+        escapePhase = true;
+        escapeText.gameObject.SetActive(true);
+        escapeText.text = "¡Run to the escape point";
+        timerText.color = Color.yellow;
+
+        if (escapeMarker != null)
+            escapeMarker.SetActive(true); // Mostrar el marcador de escape
+
+        if (escapePoint == null)
+        {
+            Debug.LogError("No se ha asignado un punto de escape en el LevelManager.");
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (escapePhase && other.CompareTag("Player"))
+        {
+            Debug.Log("Player entered");
+            YouWin();
         }
     }
 
     public void AddTime(float additionalTime)
     {
         timeLimit += additionalTime;
-
-        // Actualizar texto del temporizador para reflejar el nuevo tiempo límite
         if (timerText != null)
         {
             float remainingTime = Mathf.Max(timeLimit - timer, 0f);
@@ -112,11 +149,11 @@ public class LevelManager : MonoBehaviour
         gameLost = true;
     }
 
-    private void YouWin()
+    public void YouWin()
     {
         PauseMenuCanvas.enabled = false;
         HudCanvas.enabled = false;
-        YouWinCanvas.enabled = true; // Mostrar el Canvas de victoria
+        YouWinCanvas.enabled = true;
         Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
