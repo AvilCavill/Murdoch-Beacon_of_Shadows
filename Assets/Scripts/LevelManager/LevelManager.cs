@@ -172,4 +172,7 @@ public class LevelManager : MonoBehaviour
         Time.timeScale = 1;
         SceneManager.LoadSceneAsync(0);
     }
+    
+    
+    
 }
