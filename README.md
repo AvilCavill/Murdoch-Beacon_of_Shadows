@@ -14,9 +14,9 @@ Revisa el GDD(**Game Design Document**) del juego [aqui](https://docs.google.com
 La pizarra virtual la puedes revisar [aqui](https://miro.com/app/board/uXjVLIDAhuM=/?share_link_id=524654004204)
 
 ## ClickUp
-Enlace hacia el ClickUp del proyecto [aqui](https://app.clickup.com/9012405415/v/o/s/90121754919).
+Enlace hacia el ClickUp del proyecto [aqui](https://app.clickup.com/9012405415/v/o/s/90121754919)
 
-##Formulario
+## Formulario
 Formulario sobre el juego [aqui](https://forms.gle/gr7oyLgq3bCwyN7o6)
 
 ## Web
