@@ -11,11 +11,13 @@ public class PauseGame : MonoBehaviour
     public Button resume;
     public Button quit;
     public AudioSource buttonSound;
+    public GameObject controlsMenu;
 
     public bool on;
     public bool off;
     void Start()
     {
+        controlsMenu.SetActive(false);
         Time.timeScale = 1;
         menu.enabled = false;
         off = true;
@@ -57,6 +59,17 @@ public class PauseGame : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         buttonSound.Play();
+    }
+
+    public void ShowControls()
+    {
+        controlsMenu.SetActive(true);
+    }
+
+    public void ReturnToPauseMenu()
+    {
+        controlsMenu.SetActive(false);
+        menu.enabled = true;
     }
     
     public void ExitGame()
