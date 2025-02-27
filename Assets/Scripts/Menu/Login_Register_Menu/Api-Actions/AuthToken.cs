@@ -1,4 +1,4 @@
-public class AuthTokenDto
+public class  AuthTokenDto
 {
     public string status;
     public string message;

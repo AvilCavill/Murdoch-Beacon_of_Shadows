@@ -1,7 +1,7 @@
 public class UserDTO
 {
-    public int Id { get; set; }
-    public string Nom { get; set; }
-    public string Email { get; set; }
-    public string Token { get; set; }
+    public int id_usuari { get; set; }
+    public string nom_usuari { get; set; }
+    public string email { get; set; }
+    public string token { get; set; }
 }
