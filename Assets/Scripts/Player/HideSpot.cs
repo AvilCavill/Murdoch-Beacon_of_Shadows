@@ -51,7 +51,9 @@ public class HideSpot : MonoBehaviour
                 // Mover al jugador al área de salida
                 if (exitArea != null)
                 {
+                    player.GetComponent<CharacterController>().enabled = false;
                     player.transform.position = exitArea.position;
+                    player.GetComponent<CharacterController>().enabled = true;
                 }
                 else
                 {
