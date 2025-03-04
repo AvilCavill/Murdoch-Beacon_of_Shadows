@@ -14,11 +14,12 @@ namespace Menu.Login_Register_Menu
         public NetworkingDataScriptableObject loginDataSO;
 
         public GameObject usuari;
-        public TextMeshProUGUI emailInput;
-        public TextMeshProUGUI passwordInput;
+        public TMP_InputField userInput;
+        public TMP_InputField emailInput;
+        public TMP_InputField passwordInput;
         
         
-        public void login()
+        public void Login()
         {
             Debug.Log("Login...");
             StartCoroutine(TryLogin());
@@ -35,10 +36,10 @@ namespace Menu.Login_Register_Menu
                 httpClient.SetRequestHeader("Accept", "application/json");
                 
                 RegisterUserDTO loginDataUsuari = new RegisterUserDTO();
-                loginDataUsuari.nom = "string";
+                loginDataUsuari.nom_usuari = userInput.text;
                 loginDataUsuari.email = emailInput.text;
                 loginDataUsuari.password = passwordInput.text;
-                Debug.Log(loginDataUsuari.nom);
+                Debug.Log(loginDataUsuari.nom_usuari);
                 Debug.Log(loginDataUsuari.email);
                 Debug.Log(loginDataUsuari.password);
                 

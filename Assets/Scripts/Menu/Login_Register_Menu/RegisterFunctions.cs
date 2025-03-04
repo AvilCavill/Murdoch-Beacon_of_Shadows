@@ -12,10 +12,10 @@ namespace Menu.Login_Register_Menu
     {
         public NetworkingDataScriptableObject loginDataSO;
     
-        public TextMeshProUGUI nomUsuari;
-        public TextMeshProUGUI emailInput;
-        public TextMeshProUGUI passwordInput;
-        public void register()
+        public TMP_InputField nomUsuari;
+        public TMP_InputField emailInput;
+        public TMP_InputField passwordInput;
+        public void Register()
         {
             Debug.Log("Register...");
             StartCoroutine(TryRegister());
@@ -30,12 +30,14 @@ namespace Menu.Login_Register_Menu
             httpRequest.SetRequestHeader("Accept", "application/json");
             
             RegisterUserDTO registerUserDto = new RegisterUserDTO();
-            registerUserDto.nom = nomUsuari.text;
+            registerUserDto.nom_usuari = nomUsuari.text;
             registerUserDto.email = emailInput.text;
             registerUserDto.password = passwordInput.text;
             
             string jsonData = JsonConvert.SerializeObject(registerUserDto);
             byte[] dataToSend = Encoding.UTF8.GetBytes(jsonData);
+            httpRequest.uploadHandler = new UploadHandlerRaw(dataToSend);
+            httpRequest.downloadHandler = new DownloadHandlerBuffer();
 
             yield return httpRequest.SendWebRequest();
 
