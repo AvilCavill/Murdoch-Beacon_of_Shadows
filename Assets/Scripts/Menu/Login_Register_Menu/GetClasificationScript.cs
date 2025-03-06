@@ -24,7 +24,7 @@ namespace Menu.Login_Register_Menu
 
       private IEnumerator GetClasification()
       {
-         UnityWebRequest httpRequest = UnityWebRequest.Get(loginDataSO.apiUrl + "/LeaderboardL1/GetClasificationLevel1");
+         UnityWebRequest httpRequest = UnityWebRequest.Get(loginDataSO.apiUrl + "/LeaderboardL1/GetClassificationLevel1");
          httpRequest.SetRequestHeader("Accept", "application/json");
          httpRequest.SetRequestHeader("Authorization", "bearer" + loginDataSO.token);
          
