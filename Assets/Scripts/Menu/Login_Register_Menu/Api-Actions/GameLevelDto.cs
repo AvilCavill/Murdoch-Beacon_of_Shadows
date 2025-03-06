@@ -7,7 +7,7 @@ public class GameLevel1Dto
     public int id_ronda { get; set; }
     public int fk_id_usuari { get; set; }
     public string UserName { get; set; } = string.Empty;
-    public int temps { get; set; }
+    public int Seconds { get; set; }
     public string CreatedAt { get; set; } = string.Empty;
     public string UpdatedAt { get; set; } = string.Empty;
 }

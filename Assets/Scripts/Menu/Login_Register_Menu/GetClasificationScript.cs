@@ -40,7 +40,7 @@ namespace Menu.Login_Register_Menu
          foreach (var gameL1Data in clasification)
          {
             GameObject newLine = Instantiate(listTile, leaderBoardPanel.transform);
-            newLine.GetComponent<TextMeshProUGUI>().text = gameL1Data.UserName + "\t" + gameL1Data.temps;
+            newLine.GetComponent<TextMeshProUGUI>().text = gameL1Data.UserName+ "\t" + gameL1Data.Seconds + "s";
          }
          
       }
