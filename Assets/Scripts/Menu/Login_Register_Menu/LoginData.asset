@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2081faee26c56247ab3ae1e5602dfa7, type: 3}
   m_Name: LoginData
   m_EditorClassIdentifier: 
-  apiUrl: https://api-murdoch-beacon-of-shadows.azurewebsites.net/api
-  token: 
+  apiUrl: https://phpstack-1076337-5399863.cloudwaysapps.com/api
+  token: GHCki2tUqpMxPYBI6KnHEZD98ffEEeZMcts6J1QAh7FLDh3H7MpLcX4YQ7km

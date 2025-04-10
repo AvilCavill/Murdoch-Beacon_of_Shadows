@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: "Assets/Scenes/Classificaci\xF3n.unity"
+    guid: e4eb50b5e2e38094e97537dd1f230345
   - enabled: 0
     path: Assets/Scenes/Login_Register.unity
     guid: ba392b4aa712a884685f9e7c010a55f5
