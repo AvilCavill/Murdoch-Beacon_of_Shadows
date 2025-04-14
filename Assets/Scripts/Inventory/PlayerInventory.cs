@@ -60,7 +60,7 @@ public class PlayerInventory : MonoBehaviour
                 if (pickable != null && inventory.Count < maxInventorySize)
                 {
                     inventory.Add(pickable.itemData); // Agregar al inventario
-                    pickable.PickItem(throwPosition);
+                    Destroy(pickable.gameObject);
                     UpdateHotbarUI();
                 }
             }
@@ -83,11 +83,11 @@ public class PlayerInventory : MonoBehaviour
                 );
 
                 thrownItem.transform.SetParent(null);
-                if (thrownItem.transform.childCount > 0)
-                {
-                    Transform child = thrownItem.transform.GetChild(0); // Obtener el primer hijo, puedes modificar esto según lo necesites
-                    Destroy(child.gameObject);  // Eliminar el hijo pero no el objeto principal
-                }
+                // if (thrownItem.transform.childCount > 0)
+                // {
+                //     Transform child = thrownItem.transform.GetChild(0); // Obtener el primer hijo, puedes modificar esto según lo necesites
+                //     Destroy(child.gameObject);  // Eliminar el hijo pero no el objeto principal
+                // }
                 
                 // Añadir fuerza hacia adelante si el prefab tiene un Rigidbody
                 Rigidbody rb = thrownItem.GetComponent<Rigidbody>();
