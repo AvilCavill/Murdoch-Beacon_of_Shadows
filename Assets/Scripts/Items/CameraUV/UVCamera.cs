@@ -20,13 +20,12 @@ namespace Items.CameraUV
         public GameObject cameraHUD; 
         public GameObject pointer;
 
-        private bool isUVCameraActive = true; // Indica si la cámara UV está activa
+        private bool isUVCameraActive = false; // Indica si la cámara UV está activa
 
         void Start()
         {
             cameraHUD.SetActive(false);
             currentUses = maxUses; // Inicializa con el máximo de usos
-            ActivateUVCamera();
         }
 
         void Update()
