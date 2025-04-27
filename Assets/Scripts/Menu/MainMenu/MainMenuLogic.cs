@@ -29,6 +29,7 @@ public class MainMenuLogic : MonoBehaviour
 
     public void LoadGame()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(1);
     }
 

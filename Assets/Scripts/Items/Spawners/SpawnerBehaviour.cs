@@ -21,20 +21,27 @@ namespace Items.Spawners
     
         void SpawnLog()
         {
+            // Limpia cualquier referencia nula
+            spawnedLogs.RemoveAll(log => log == null);
+
             // Comprueba si ya se ha alcanzado el máximo de troncos
             if (spawnedLogs.Count >= maxLogs)
             {
                 return;
             }
 
-            // Genera una posición aleatoria dentro de un área circular
-            Vector3 spawnPosition = transform.position + Random.insideUnitSphere * spawnRadius;
-            spawnPosition.y = transform.position.y; // Mantén la posición en el mismo nivel
+            // Genera una posición aleatoria dentro de un área circular en 2D
+            Vector2 randomPos = Random.insideUnitCircle * spawnRadius;
+            Vector3 spawnPosition = new Vector3(transform.position.x + randomPos.x, transform.position.y, transform.position.z + randomPos.y);
 
-            // Crea el tronco
+            // Instancia el tronco
             GameObject newLog = Instantiate(logPrefab, spawnPosition, Quaternion.identity);
 
-            newLog.GetComponent<ItemPickable>().OnItemPickedUp += RemoveLog;
+            // Se registra para eliminarlo al recogerlo
+            if (newLog.TryGetComponent<ItemPickable>(out var pickable))
+            {
+                pickable.OnItemPickedUp += RemoveLog;
+            }
 
             // Añade el tronco a la lista
             spawnedLogs.Add(newLog);

@@ -1,156 +1,174 @@
-using System.Collections;
-using System.Collections.Generic;
+using Player;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class IABehaviour : MonoBehaviour
+namespace Enemy
 {
-    [Header("Patrulla")]
-    public Transform[] puntosDePatrulla; // Puntos de patrulla
-    private int indiceActual = 0; // Índice del punto de patrulla actual
-
-    [Header("Persecución")]
-    public Transform jugador; // Referencia al jugador
-    public float rangoVision = 40f; // Distancia de visión
-    public float anguloVision = 70f; // Ángulo de visión
-    public LayerMask capaJugador; // Capa del jugador
-    public LayerMask obstaculos; // Capa de los obstáculos
-    public float tiempoParaPerderJugador = 5f; // Tiempo antes de abandonar la persecución
-    public float distanciaAtaque = 3f; // Distancia mínima para atacar al jugador
-    public float tiempoEntreAtaques = 3f; // Tiempo entre ataques
-
-    [Header("Componentes")]
-    private NavMeshAgent agente;
-    private Animator animator; // Componente Animator
-    private bool persiguiendo = false;
-    private bool atacando = false;
-    private float tiempoSinVerJugador = 0f;
-    private float temporizadorAtaque = 0f;
-    public HealthBarSystem healthBarSystem;
-    
-    [Header("Stun")]
-    private bool isStunned = false;
-    private float stunTimer = 0f;
-
-    void Start()
+    public enum EnemyState
     {
-        agente = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-        animator.SetBool("Patrol", true);
-        
-        if (puntosDePatrulla.Length > 0)
-        {
-            agente.SetDestination(puntosDePatrulla[indiceActual].position);
-            
-        }
+        Patrolling,
+        Pursuing,
+        Attacking,
+        Stunned
     }
 
-    void Update()
+    public class IABehaviour : MonoBehaviour
     {
-        if (isStunned)
+        [Header("Patrulla")]
+        public Transform[] puntosDePatrulla;
+        private int indiceActual = 0;
+
+        [Header("Persecución")]
+        public Transform jugador;
+        public float rangoVision = 40f;
+        public float anguloVision = 70f;
+        public LayerMask capaJugador;
+        public LayerMask obstaculos;
+        public float tiempoParaPerderJugador = 5f;
+        public float distanciaAtaque = 3f;
+        public float tiempoEntreAtaques = 3f;
+
+        [Header("Componentes")]
+        private NavMeshAgent agente;
+        private Animator animator;
+        private float tiempoSinVerJugador = 0f;
+        private float temporizadorAtaque = 0f;
+
+        [Header("Vida")]
+        public HealthBarSystem healthBarSystem;
+
+        [Header("Stun")]
+        private bool isStunned = false;
+        private float stunTimer = 0f;
+
+        private EnemyState currentState = EnemyState.Patrolling;
+        
+        private PlayerController jugadorController;
+
+        void Start()
+        {
+            agente = GetComponent<NavMeshAgent>();
+            animator = GetComponent<Animator>();
+
+            if (jugador != null)
+                jugadorController = jugador.GetComponent<PlayerController>();
+            
+            if (puntosDePatrulla.Length > 0)
+                agente.SetDestination(puntosDePatrulla[indiceActual].position);
+
+            UpdateAnimationState();
+        }
+
+        void Update()
+        {
+            if (isStunned)
+            {
+                UpdateStun();
+                return;
+            }
+
+            temporizadorAtaque += Time.deltaTime;
+
+            switch (currentState)
+            {
+                case EnemyState.Patrolling:
+                    Patrullar();
+                    DetectarJugador();
+                    break;
+
+                case EnemyState.Pursuing:
+                    PerseguirJugador();
+                    break;
+
+                case EnemyState.Attacking:
+                    AtacarJugador();
+                    break;
+            }
+        }
+
+        void UpdateAnimationState()
+        {
+            animator.SetInteger("State", (int)currentState);
+        }
+
+        void UpdateStun()
         {
             stunTimer -= Time.deltaTime;
             if (stunTimer <= 0)
             {
                 isStunned = false;
-                EnableEnemyAI(); // Restaura el comportamiento normal
+                agente.isStopped = false;
+                ChangeState(EnemyState.Patrolling);
             }
-            return; // No ejecutar más lógica si el enemigo está aturdido
         }
 
-        temporizadorAtaque += Time.deltaTime;
-
-        if (jugador != null && jugador.GetComponent<PlayerController>().IsHiding())
+        public void Stun(float duration)
         {
-            persiguiendo = false;
-            agente.SetDestination(puntosDePatrulla[indiceActual].position);
-            animator.SetBool("Patrol", true);
+            isStunned = true;
+            stunTimer = duration;
+            agente.isStopped = true;
+            ChangeState(EnemyState.Stunned);
         }
 
-        if (persiguiendo)
+        void ChangeState(EnemyState newState)
         {
-            if (Vector3.Distance(transform.position, jugador.position) <= distanciaAtaque)
+            currentState = newState;
+            UpdateAnimationState();
+        }
+
+        void Patrullar()
+        {
+            if (puntosDePatrulla.Length == 0) return;
+
+            if (!agente.pathPending && agente.remainingDistance < 0.5f)
             {
-                AtacarJugador();
+                indiceActual = (indiceActual + 1) % puntosDePatrulla.Length;
+                agente.SetDestination(puntosDePatrulla[indiceActual].position);
             }
-            else
+        }
+
+        void PerseguirJugador()
+        {
+            if (jugador == null)
             {
-                animator.SetBool("PlayerIsNear", false);
-                PerseguirJugador();
+                ChangeState(EnemyState.Patrolling);
+                return;
             }
-        }
-        else
-        {
-            Patrullar();
-            DetectarJugador();
-        }
-    }
 
-    public void Stun(float duration)
-    {
-        isStunned = true;
-        stunTimer = duration;
-        // Desactivar comportamiento del enemigo mientras está aturdido
-        DisableEnemyAI();
-        Debug.Log("Enemigo aturdido por " + duration + " segundos.");
-    }
+            // Si el jugador está escondido
+            if (jugadorController != null && jugadorController.IsHiding())
+            {
+                agente.SetDestination(transform.position); // Detener al enemigo
+                tiempoSinVerJugador += Time.deltaTime;
 
-    private void DisableEnemyAI()
-    {
-        agente.isStopped = true;
-        animator.SetBool("Stunned", true);
-    }
-    
-    private void EnableEnemyAI()
-    {
-        agente.isStopped = false;
-        animator.SetBool("Stunned", false);
-    }
+                if (tiempoSinVerJugador >= tiempoParaPerderJugador)
+                {
+                    tiempoSinVerJugador = 0f;
+                    ChangeState(EnemyState.Patrolling);
+                    agente.SetDestination(puntosDePatrulla[indiceActual].position);
+                }
 
+                return; // No seguir persiguiendo
+            }
 
-    void Patrullar()
-    {
-        if (puntosDePatrulla.Length == 0) return;
-
-        if (!agente.pathPending && agente.remainingDistance < 0.5f)
-        {
-            indiceActual = (indiceActual + 1) % puntosDePatrulla.Length;
-            agente.SetDestination(puntosDePatrulla[indiceActual].position);
-        }
-
-        // Cambiar animación a "Patrulla" si no está persiguiendo ni atacando
-        if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Crouch_Action"))
-        {
-            animator.SetBool("Patrol", true);
-        }
-    }
-
-    void PerseguirJugador()
-    {
-        if (jugador != null)
-        {
+            // Si no está escondido, seguir normalmente
             agente.SetDestination(jugador.position);
-
-            // Cambia la animación a "Correr" o "Perseguir"
-            if (animator != null && !animator.GetCurrentAnimatorStateInfo(0).IsName("Creep_Crouch_Action"))
-            {
-                animator.SetTrigger("Pursue");
-            }
 
             float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
 
-            if (distanciaAlJugador > rangoVision || !EstaEnCampoDeVision())
+            if (distanciaAlJugador <= distanciaAtaque)
+            {
+                ChangeState(EnemyState.Attacking);
+            }
+            else if (distanciaAlJugador > rangoVision || !EstaEnCampoDeVision())
             {
                 tiempoSinVerJugador += Time.deltaTime;
 
                 if (tiempoSinVerJugador >= tiempoParaPerderJugador)
                 {
-                    persiguiendo = false;
                     tiempoSinVerJugador = 0f;
+                    ChangeState(EnemyState.Patrolling);
                     agente.SetDestination(puntosDePatrulla[indiceActual].position);
-
-                    // Vuelve a la animación de patrulla
-                    animator.SetBool("Patrol", true);
                 }
             }
             else
@@ -158,35 +176,40 @@ public class IABehaviour : MonoBehaviour
                 tiempoSinVerJugador = 0f;
             }
         }
-    }
 
-    void AtacarJugador()
-    {
-        animator.SetBool("Patrol", false);
-        if (temporizadorAtaque >= tiempoEntreAtaques)
+        void AtacarJugador()
         {
-            temporizadorAtaque = 0f; // Reinicia el temporizador
-
-            // // Cambia a la animación de ataque
-            
-                animator.SetTrigger("Attack");
-                animator.SetTrigger("Attack");
-                animator.SetBool("PlayerIsNear", true);
-            
-
-            // Lógica de daño
-            
-            if (healthBarSystem.health != null)
+            if (jugador == null)
             {
-                healthBarSystem.TakeDamage(20);
+                ChangeState(EnemyState.Patrolling);
+                return;
+            }
+
+            agente.SetDestination(transform.position); // Detiene al enemigo para atacar
+
+            if (temporizadorAtaque >= tiempoEntreAtaques)
+            {
+                temporizadorAtaque = 0f;
+                animator.SetTrigger("Attack");
+
+                if (healthBarSystem.health != null)
+                {
+                    healthBarSystem.TakeDamage(20);
+                }
+            }
+
+            float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
+
+            if (distanciaAlJugador > distanciaAtaque)
+            {
+                ChangeState(EnemyState.Pursuing);
             }
         }
-    }
 
-    void DetectarJugador()
-    {
-        if (jugador != null)
+        void DetectarJugador()
         {
+            if (jugador == null || (jugadorController != null && jugadorController.IsHiding())) return;
+
             Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
             float distanciaAlJugador = Vector3.Distance(transform.position, jugador.position);
 
@@ -195,44 +218,25 @@ public class IABehaviour : MonoBehaviour
                 direccionAlJugador.y = 0;
                 float angulo = Vector3.Angle(transform.forward, direccionAlJugador);
 
-                if (angulo <= anguloVision / 2f)
+                Vector3 origenRaycast = transform.position + Vector3.up * 1.5f;
+                if (angulo <= anguloVision / 2f && !Physics.Raycast(origenRaycast, direccionAlJugador, distanciaAlJugador, obstaculos))
                 {
-                    Vector3 origenRaycast = transform.position + Vector3.up * 1.5f;
-                    if (!Physics.Raycast(origenRaycast, direccionAlJugador, distanciaAlJugador, obstaculos))
-                    {
-                        persiguiendo = true;
-
-                        // Cambia a la animación de persecución
-                        animator.SetTrigger("Pursue");
-                    }
+                    ChangeState(EnemyState.Pursuing);
                 }
             }
         }
-    }
 
-    bool EstaEnCampoDeVision()
-    {
-        if (jugador == null) return false;
+        bool EstaEnCampoDeVision()
+        {
+            if (jugador == null || (jugadorController != null && jugadorController.IsHiding())) return false;
 
-        Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
-        direccionAlJugador.y = 0;
-        float angulo = Vector3.Angle(transform.forward, direccionAlJugador);
+            Vector3 direccionAlJugador = (jugador.position - transform.position).normalized;
+            direccionAlJugador.y = 0;
+            float angulo = Vector3.Angle(transform.forward, direccionAlJugador);
 
-        Vector3 origenRaycast = transform.position + Vector3.up * 1.5f;
-        return angulo <= anguloVision / 2f &&
-               !Physics.Raycast(origenRaycast, direccionAlJugador, Vector3.Distance(transform.position, jugador.position), obstaculos);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, rangoVision);
-
-        Vector3 anguloIzquierdo = Quaternion.Euler(0, -anguloVision / 2, 0) * transform.forward;
-        Vector3 anguloDerecho = Quaternion.Euler(0, anguloVision / 2, 0) * transform.forward;
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, anguloIzquierdo * rangoVision);
-        Gizmos.DrawRay(transform.position, anguloDerecho * rangoVision);
+            Vector3 origenRaycast = transform.position + Vector3.up * 1.5f;
+            return angulo <= anguloVision / 2f &&
+                   !Physics.Raycast(origenRaycast, direccionAlJugador, Vector3.Distance(transform.position, jugador.position), obstaculos);
+        }
     }
 }

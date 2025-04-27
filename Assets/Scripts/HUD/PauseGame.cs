@@ -27,7 +27,7 @@ public class PauseGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (off && Input.GetKeyDown(KeyCode.P))
+        if (off && Input.GetKeyDown(KeyCode.Escape))
         {
             generalHUD.SetActive(false);
             Time.timeScale = 0;
@@ -37,7 +37,7 @@ public class PauseGame : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
-        else if (on && Input.GetKeyDown(KeyCode.P))
+        else if (on && Input.GetKeyDown(KeyCode.Escape))
         {
             generalHUD.SetActive(true);
             Time.timeScale = 1;

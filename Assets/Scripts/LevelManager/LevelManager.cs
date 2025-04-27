@@ -160,6 +160,11 @@ public class LevelManager : MonoBehaviour
         gameWon = true;
     }
 
+    public void ClassificationMenu()
+    {
+        SceneManager.LoadScene(2);
+    }
+
     public void RestartLevel()
     {
         Time.timeScale = 1;
