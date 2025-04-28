@@ -39,7 +39,7 @@ namespace Enemy
 
         [Header("Stun")]
         private bool isStunned = false;
-        private float stunTimer = 0f;
+        private float stunTimer = 3f;
 
         private EnemyState currentState = EnemyState.Patrolling;
         
@@ -108,6 +108,7 @@ namespace Enemy
             stunTimer = duration;
             agente.isStopped = true;
             ChangeState(EnemyState.Stunned);
+            ScoreManager.ScoreManager.instance?.AddScore(50);
         }
 
         void ChangeState(EnemyState newState)

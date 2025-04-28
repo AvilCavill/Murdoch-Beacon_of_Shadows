@@ -106,6 +106,8 @@ public class LevelManager : MonoBehaviour
         {
             Debug.LogError("No se ha asignado un punto de escape en el LevelManager.");
         }
+        ScoreManager.ScoreManager.instance?.StartEscapePhase();
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -120,6 +122,7 @@ public class LevelManager : MonoBehaviour
     public void AddTime(float additionalTime)
     {
         timeLimit += additionalTime;
+        ScoreManager.ScoreManager.instance?.AddScore(5);
         if (timerText != null)
         {
             float remainingTime = Mathf.Max(timeLimit - timer, 0f);
@@ -158,6 +161,7 @@ public class LevelManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         gameWon = true;
+        ScoreManager.ScoreManager.instance?.StopEscapePhase();
     }
 
     public void ClassificationMenu()
@@ -168,6 +172,7 @@ public class LevelManager : MonoBehaviour
     public void RestartLevel()
     {
         Time.timeScale = 1;
+        ScoreManager.ScoreManager.instance?.ResetScore();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -175,6 +180,7 @@ public class LevelManager : MonoBehaviour
     {
         HealthBarSystem.healthSlider.value = 100;
         Time.timeScale = 1;
+        ScoreManager.ScoreManager.instance?.ResetScore();
         SceneManager.LoadSceneAsync(0);
     }
     

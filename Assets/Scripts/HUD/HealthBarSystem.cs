@@ -44,6 +44,8 @@ public class HealthBarSystem : MonoBehaviour
         fill.enabled = true;
         background.enabled = true;
         StartCoroutine(HealOverTime(amount));
+        
+        ScoreManager.ScoreManager.instance.AddScore(20);
 
         // Reinicia el temporizador de desactivación.
         CancelInvoke("HideHealthBar");
