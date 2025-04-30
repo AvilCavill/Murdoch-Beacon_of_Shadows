@@ -20,7 +20,7 @@ Enlace hacia el ClickUp del proyecto [aqui](https://app.clickup.com/9012405415/v
 Formulario sobre el juego [aqui](https://forms.gle/gr7oyLgq3bCwyN7o6)
 
 ## Web
-[Web]()
+[Web](https://samusk8.github.io/Murdoch_Beacon_of_Shadows/)
 
 ## GDD One Page
 ![Infografia ](https://github.com/user-attachments/assets/a58f268a-48fc-446a-81f6-d59f49e61333)
