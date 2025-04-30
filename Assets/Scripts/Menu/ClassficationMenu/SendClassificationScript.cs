@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 namespace Menu.ClassficationMenu
 {
@@ -26,6 +27,7 @@ namespace Menu.ClassficationMenu
         public void SendClasification()
         {
             StartCoroutine(SendDataClassification());
+            
         }
 
         private IEnumerator SendDataClassification()
