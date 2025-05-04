@@ -27,7 +27,8 @@ namespace Menu.ClassficationMenu
         public void SendClasification()
         {
             StartCoroutine(SendDataClassification());
-            
+            SceneManager.LoadScene("MainMenu");
+            Time.timeScale = 1;
         }
 
         private IEnumerator SendDataClassification()

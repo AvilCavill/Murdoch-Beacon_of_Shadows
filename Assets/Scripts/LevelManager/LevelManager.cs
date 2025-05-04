@@ -17,9 +17,9 @@ public class LevelManager : MonoBehaviour
     public TMP_Text escapeText; // Texto de escape
 
     public Transform escapePoint; // Punto al que el jugador debe llegar
-    public float timeLimit = 200f;
-    public float WinTime = 300f;
-    public float escapeTime = 30f; // Tiempo extra para escapar
+    public float timeLimit = 150;
+    public float WinTime = 210f;
+    public float escapeTime = 80f; // Tiempo extra para escapar
 
     private float timer;
     private bool gameLost = false;
